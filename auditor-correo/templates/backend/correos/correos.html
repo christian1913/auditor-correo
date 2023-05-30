@@ -88,7 +88,7 @@
                                     <input type="text" name="enviar">
                                     <select name="plantilla">
                                         {% for plantillas in datos.plantillas %}
-                                            <option value="{{plantillas.id}}">{{plantillas.servicio}}</option>
+                                            <option value="{{plantillas.id}}">{{plantillas.nombre}}</option>
                                         {% endfor %}
                                     </select>      
                                     <input type="submit" class="submit" value="Enviar">

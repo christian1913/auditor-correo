@@ -6,7 +6,7 @@ from backend.grupos.models import Grupos
 from backend.smtp.models import Enviados
 from backend.correos.models import Correos
 from backend.plantillas.models import Plantillas
-from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web
+from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
 
 
 @login_required(login_url='/accounts/login/') 
@@ -84,12 +84,36 @@ def obtener_datos_correos(request, id):
     estatus_mail = Estatus_Mail.objects.filter(enviado__propietario__username=usuario)
     estatus_pc = Estatus_PC.objects.filter(enviado__propietario__username=usuario)
 
+    enviados = Enviados.objects.filter(propietario__username=usuario)
+
+    datos_enviados = []
+    for enviado in enviados:
+        estatus_web = Estatus_Web.objects.filter(enviado=enviado)
+        estatus_mail = Estatus_Mail.objects.filter(enviado=enviado)
+        estatus_pc = Estatus_PC.objects.filter(enviado=enviado)
+        
+        credenciales = None
+        for web in estatus_web:
+            try:
+                credenciales = Credenciales.objects.get(estatus_web=web)
+            except Credenciales.DoesNotExist:
+                credenciales = None
+
+        dato_enviado = {
+            'enviado': enviado,
+            'estatus_web': estatus_web,
+            'estatus_mail': estatus_mail,
+            'estatus_pc': estatus_pc,
+            'credenciales': credenciales,
+        }
+
+        datos_enviados.append(dato_enviado)
     datos = { 
         'correos' : Correos.objects.filter(propietario__username=usuario, grupo__id=id),
         'grupos' : nombre_grupos,
         'grupo': grupo.nombre,
         'grupo_id': grupo.id,
-        'enviados' : Enviados.objects.filter(propietario__username=usuario),
+        'enviados' : datos_enviados,
         'plantillas': lista_plantillas,
         'estatus_web': estatus_web,
         'estatus_mail': estatus_mail,
@@ -97,6 +121,7 @@ def obtener_datos_correos(request, id):
     }
 
     return datos
+
 
 
 # Funciones post

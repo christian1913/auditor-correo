@@ -29,13 +29,8 @@ class Plantillas(models.Model):
     mensaje = models.TextField()
     imagen = models.ImageField(upload_to='ruta/para/subir/')
     plantilla = models.TextField()
-    script = models.TextField()
+    script = models.TextField(null=True, blank=True)
     emisor = models.ForeignKey(Emisores, on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        if self.tipo == 'phishing':
-            self.script = None
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nombre
