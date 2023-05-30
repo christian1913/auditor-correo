@@ -1,0 +1,153 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages 
+from backend.grupos.models import Grupos
+from backend.smtp.models import Enviados
+from backend.correos.models import Correos
+from backend.plantillas.models import Plantillas
+from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web
+
+
+@login_required(login_url='/accounts/login/') 
+def correos(request, id=None):
+
+
+    if request.method == 'GET':
+        
+        datos = obtener_datos_correos(request, id)
+
+        data = {
+        
+            'datos' : datos,
+        }
+
+
+    elif request.method == 'POST':
+
+        # Eliminar correo
+
+        if request.POST['instruccion'] == 'eliminar-correo':
+
+            eliminar_correo(request)
+
+        # Cambiar correo de grupo
+
+        if request.POST['instruccion'] == 'cambiar-correo':
+
+            cambiar_correo_grupo(request)
+
+        if request.POST['instruccion'] == 'añadir-correo':
+
+            añadir_correo(request)
+
+        else:
+            
+            print('ninguna seleccion es correcta')
+            messages.add_message(request, messages.ERROR, 'Error en la peticion"')
+
+
+        datos = obtener_datos_correos(request, id)
+
+        data = {
+        
+            'datos' : datos,
+
+        }
+
+    else:
+
+        print('NO ES UN GET NI UN POST')
+        datos = obtener_datos_correos(request, id)
+        messages.add_message(request, messages.ERROR, 'Error en la peticion')
+
+        data = {
+        
+            'datos' : datos,
+
+        }
+
+    return render(request, 'backend/correos/correos.html', data)
+
+
+# Funcion obtener datos correos
+
+@login_required(login_url='/accounts/login/')
+def obtener_datos_correos(request, id):
+    usuario = User.get_username(request.user)
+    grupo = Grupos.objects.filter(id=id)[0]
+    grupos = Grupos.objects.filter(propietario__username=usuario).exclude(id=id)
+    nombre_grupos = [{'id' : d.id, 'nombre' : d.nombre} for d in grupos ]
+    plantillas = Plantillas.objects.all()
+    lista_plantillas = [{'id' : d.id, 'nombre' : d.nombre } for d in plantillas ]
+    estatus_web = Estatus_Web.objects.filter(enviado__propietario__username=usuario)
+    estatus_mail = Estatus_Mail.objects.filter(enviado__propietario__username=usuario)
+    estatus_pc = Estatus_PC.objects.filter(enviado__propietario__username=usuario)
+
+    datos = { 
+        'correos' : Correos.objects.filter(propietario__username=usuario, grupo__id=id),
+        'grupos' : nombre_grupos,
+        'grupo': grupo.nombre,
+        'grupo_id': grupo.id,
+        'enviados' : Enviados.objects.filter(propietario__username=usuario),
+        'plantillas': lista_plantillas,
+        'estatus_web': estatus_web,
+        'estatus_mail': estatus_mail,
+        'estatus_pc': estatus_pc,
+    }
+
+    return datos
+
+
+# Funciones post
+
+@login_required(login_url='/accounts/login/')
+def eliminar_correo(request):
+    
+    if request.POST['delete'] == 'delete':
+
+        try:
+
+            correo_obj = Correos.objects.filter(id=request.POST['id'])
+            correo_obj.delete()
+            messages.add_message(request, messages.SUCCESS, 'Correo eliminado correctamente')
+        
+        except:
+
+            messages.add_message(request, messages.ERROR, 'No se ha encontrado el correo')
+    
+    else:
+
+        messages.add_message(request, messages.ERROR, 'No se ha podido eliminar el correo')
+
+    return 
+    
+@login_required(login_url='/accounts/login/')
+def cambiar_correo_grupo(request):
+
+    try:
+
+        Correos.objects.filter(id=request.POST['id-correo']).update(grupo=request.POST['id-grupo'])
+
+        messages.add_message(request, messages.SUCCESS, 'Correo movido correctamente')
+    
+    except:
+
+        messages.add_message(request, messages.ERROR, 'No se ha encontrado el correo')
+    
+
+    return
+
+
+def añadir_correo(request):
+
+    usuario = User.get_username(request.user)
+    comprabacion = Correos.objects.filter(correo=request.POST['correo'], propietario__username=usuario)
+    if comprabacion: 
+        messages.add_message(request, messages.ERROR, 'Error al añadir el correo o el correo ya existe')
+    else:
+        usuario = User.objects.get(username=usuario)
+        departameto = Grupos.objects.get(id=request.POST['grupo'], propietario=usuario)
+        Correos.objects.create(correo=request.POST['correo'], grupo=departameto, propietario=usuario)
+        messages.add_message(request, messages.SUCCESS, 'Correo añadido correctamente')
+    return 

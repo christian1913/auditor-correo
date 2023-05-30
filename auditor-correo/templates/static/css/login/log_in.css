@@ -1,0 +1,161 @@
+:root{
+    --color-orange: #E7431F;
+    --color-red: #FF4545;
+    --color-grey-hard: #707070;
+    --color-grey: #929294;
+    --color-grey-soft: #EDEDED;
+    --color-black: #2F2F2F;
+    --color-white: #fff;
+}
+
+* {
+    font-family: Poppins,sans-serif;
+}
+
+h1 {
+    color: var(--color-orange);
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 20px;
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+    margin-bottom: 30px;
+}
+h6 {
+    color: var(--color-orange);
+    line-height: 1.2;
+    font-size: 14px;
+    margin: 0;
+    font-family: Poppins,sans-serif;
+    white-space: nowrap;
+    text-decoration: none;
+    font-weight: 300;
+    display: inline;
+}
+
+body {
+    font-family: Poppins,sans-serif;
+    margin: 0 auto;
+    background-color: var(--color-grey-soft);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+main {
+    background-color: white;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px 15px;
+    border-radius: 30px;
+}
+
+.brand-icon {
+    margin-right: 10px;
+    width: 20px;
+    filter: invert(35%) sepia(40%) saturate(6440%) hue-rotate(352deg) brightness(95%) contrast(90%); /*orange*/
+    margin-bottom: 10px;
+}
+
+.loginInputBox {
+    border-bottom: 2px solid #1E1E2F;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding-bottom: 5px;
+}
+
+
+.logo {
+    margin-bottom: 15px;
+}
+.logo img {
+    width: 50px;
+}
+.logo h1 {
+    font-size: 25px;
+}
+
+@keyframes border_anim {
+	0%{
+		width: 0%;
+	}
+	100%{
+		width: 100%;
+	}
+}
+
+input[type="text"], input[type="password"] {
+    border: none;
+    color: #1E1E2F;
+    font-size: 14px;
+    font-family: Poppins,sans-serif;
+    font-weight: 300;
+}
+
+input[type="text"]:focus, input[type="password"]:focus,
+input[type="text"]:active, input[type="password"]:active {
+    border: none;
+    outline: none;
+}
+
+input[type="submit"] {
+    border: none;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    width: 100%;
+    font-size: 10px;
+    font-family: Poppins,sans-serif;
+    font-weight: 300;
+    padding: 6px;
+    margin-top: 20px;
+
+}
+
+
+/* RESPONSIVE */
+
+/* Large desktop screens */
+@media (max-width: 1200px) {
+    /* Your styles go here */
+}
+
+/* Small desktop screens */
+@media (max-width: 992px) {
+    /* Your styles go here */
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    /* Your styles go here */
+    body {
+        background-color: var(--color-white);
+    }
+    main {
+        min-width: 100%;
+    }
+    
+    form {
+        width: calc(100% - 200px);
+        transition: width 0.2s ease-in-out;
+    }
+}
+
+/* Small tablets */
+@media (max-width: 600px) {
+    /* Your styles go here */
+}
+/* Small mobile devices and some older phones */
+@media (max-width: 480px) {
+    /* Your styles go here */
+    form {
+        width: calc(100% - 100px);
+    }
+}
+/* Small mobile devices */
+@media (max-width: 320px) {
+    /* Your styles go here */
+  }

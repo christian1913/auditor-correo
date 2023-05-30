@@ -1,0 +1,143 @@
+.empresaBox {
+    background: none;
+}
+
+.empresaBox > .pc-box {
+    display: flex;
+}
+
+.subtitle h6 {
+    color: var(--color-gfr)
+}
+.headerEmpresa .subtitle:hover h6 {
+    color: var(--color-orange) !important;
+}
+
+.actionsWrapper {
+    margin-left: 20px;
+    width: fit-content !important;
+}
+
+.accionesDrop {
+    vertical-align: bottom;
+    filter: invert(100%) sepia(0%) saturate(7477%) hue-rotate(296deg) brightness(108%) contrast(94%); /*white*/
+}
+
+.subtitle:hover .accionesDrop {
+    filter: invert(35%) sepia(40%) saturate(6440%) hue-rotate(352deg) brightness(95%) contrast(90%); /*orange*/
+}
+
+.actionsWrapper ul {
+    margin:0;padding:0;
+    list-style-type:none;
+    float:left;
+    display:inline-block;
+    z-index: 1;
+}
+
+.actionsWrapper ul li {
+    position:relative;
+    margin:0 20px 0 0;
+    float:left;
+    display:inline-block;
+}
+
+.actionsWrapper li > a:after,
+.actionsWrapper li > .user-icon:after { 
+    margin-left: 10px;
+}
+
+.actionsWrapper li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actionsWrapper li > a:only-child:after,
+.actionsWrapper li > div > .user-icon > svg:only-child:after
+{ content: ''; }
+
+.actionsWrapper ul li a {
+    padding:20px;
+    display:inline-block;
+    color:white;
+    text-decoration:none;
+    font-family: Poppins,sans-serif;
+    font-size: 13px;
+}
+
+.actionsWrapper ul li a:hover {
+    color: #1d8cf8;
+}
+
+.actionsWrapper ul li ul {
+    display: none;
+    position:absolute;
+    left:0;
+    background: #3DA574;
+    float:left;
+    min-width: 180px;
+}
+
+.actionsWrapper ul li ul li {
+    width:100%;
+}
+
+.actionsWrapper ul li:hover ul {
+    display:block;
+}
+
+.actionsWrapper .user {
+    float: right;
+}
+
+.actionsWrapper .user-icon {
+    padding:20px;
+    display: flex;
+    align-items: center;
+    color:white;
+}
+
+.actionsWrapper .actionsButton {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #fff;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.actionsWrapper .actionsButton img{
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(162deg) brightness(101%) contrast(104%) !important; /*white*/
+    margin-right: 10px !important;
+}
+
+.first-list, .first-list:hover {
+    border-top-left-radius: 6px !important;
+    border-top-right-radius: 6px !important;
+}
+
+.last-list, .last-list:hover {
+    border-bottom-left-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+}
+
+.icon-add, .icon-close {
+    width:22px;
+}
+
+.green-back:hover {
+    background-color: #50b484 !important;
+}
+
+.delete-btn-empresa {
+    background-color: #FF382C !important;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+.delete-btn-empresa:hover {
+    background-color: #fd4e45 !important;
+}

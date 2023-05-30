@@ -1,0 +1,31 @@
+{% load static %}
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Log in | Phishing</title>
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimun-scale=1.0"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <link rel="stylesheet" href="{% static 'css/login/log_in.css' %}">
+  </head>
+  <body>
+    <main>
+      <form class="loginForm" action="" method="POST" id="form-login">
+        {% csrf_token %}
+        <h6>Username</h6>
+        <div class="loginInputBox">
+          <i class="fas fa-envelope icon" id="username"></i>
+          {{form.username}}
+        </div>
+        <h6>Password</h6>
+        <div class="loginInputBox" >
+          <i class="fas fa-key icon" id="password"></i>
+          {{form.password}}
+        </div> 
+        <input type="submit" value="Login" class="button">
+      </form>
+    </main>
+  </body>
+</html>
+<script>
+  
+</script>

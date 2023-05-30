@@ -1,0 +1,15 @@
+.headerContainer {
+    width: 95%;
+    margin-top: 18px;
+
+}
+
+.headerContainer > div {
+    width: 100%;
+    padding: 20px 0px;
+    font-size: 13px;
+}
+
+.sectionTitle {
+    color: var(--color-orange);
+}

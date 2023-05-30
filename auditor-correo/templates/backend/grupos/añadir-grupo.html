@@ -1,0 +1,20 @@
+
+
+{% load static %}
+
+<div id="grupo-modal" class="modal popupContentWrapper">
+    <div class="popup-content">
+        <span onclick="toggleModal('grupo-modal')" class="close">&times;</span>
+        <form action="{% url 'grupos' %}" method="post" style="text-align: center;">
+            <h5>Añadir nuevo grupo</h5>
+            <div>
+                {% csrf_token %}
+                <input autocomplete="on" name="instruccion" id="instruccion" value="crear-grupo" type="hidden">
+                <input type="text" class="Before-FS" required="True" autocomplete="off" name="nombre">
+                <input type="submit" class="submit" value="Añadir">
+            </div>
+            
+        
+        </form>
+    </div>
+</div>

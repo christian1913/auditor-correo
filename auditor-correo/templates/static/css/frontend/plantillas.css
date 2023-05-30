@@ -1,0 +1,60 @@
+.previewWrapper {
+    width: 100%;
+    height: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.previewTitle {
+    margin-bottom: 15px;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 0px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.previewTitle:hover{
+    color: var(--color-orange);
+}
+
+.previewContent {
+    width: 100%;
+    height: 0px;
+    border-radius: 5px;
+    overflow: hidden;
+    display: none;
+}
+
+.previewContent.active {
+    height: 800px !important;
+    border: 1px solid #ccc !important;
+    display: block !important;
+}
+
+.previewContent > iframe {
+    width: 100%;
+    height: 0px;
+    border: none;
+}
+
+.previewContent.active > iframe{
+    height: 800px !important;
+    transition: height 0.5s ease-out !important;
+}
+
+.info > div:last-child {
+    margin-bottom: 15px;
+}
+
+.previewTemplateButtons {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.previewEmail {
+    height: auto !important;
+}

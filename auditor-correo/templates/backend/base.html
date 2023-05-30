@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auditor</title>
+    {% load static %}
+
+    <link href="{% static 'css/frontend/index.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/navbar.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/sidebar.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/correos.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/popup.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/headerEmpresa.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/dashboard.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/header.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/plantillas.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/frontend/opciones.css'%}" rel="stylesheet" />
+
+</head>
+<body>
+
+    {% load static %}
+
+    {% include 'backend/control_errores.html' %}
+   
+
+    <section class="main-panel">
+
+        <!--top menu-->
+        {% block navbar %}
+        {% include 'backend/navbar.html' %}
+        {% endblock %}
+
+        <section class="info">
+
+         <!--extender el cuerpo-->
+
+        {% block content %}
+        {% endblock %}
+
+         
+        </section>
+
+    </section>
+
+    <script src="{% static 'js/frontend/correos.js' %}" type="text/javascript" ></script>
+    <script src="{% static 'js/frontend/popup.js' %}" type="text/javascript" ></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% load static %}
+<table id="credenciales">
+
+    {% for x in datos.enviados %}
+
+        <tr>
+            <th><h6>Fecha envio</h6></th>   
+            <th><h6>Plantilla</h6></th>
+            <th><h6>Estado</h6></th>
+            <th><h6>Fecha ultima visita</h6></th>
+            <th><h6>Ip</h6></th>
+            <th><h6>Pais</h6></th>
+            <th><h6>Idioma</h6></th>
+            {% if x.plantilla.tipo == "phishing" %}
+                <th><h6>Usuario</h6></th>
+                <th><h6>Contraseña</h6></th>
+            {% endif %}
+            {% if x.plantilla.tipo == "script" %}
+                <th><h6>IP Dispositivo</h6></th>
+                <th><h6>Estado</h6></th>
+                <th><h6>Fecha ultima ejecución</h6></th>
+            {% endif %}
+
+        </tr>
+    
+        <h1>x</h1>
+        {% if x.correo.id == i.id %}
+            <tr>
+                <td>{{ x.fecha_envio }}</td>
+                <td>{{ x.plantilla }}</td>
+                <td>{{ x.mail_estatus_id.ip_address }}</td>
+                <td>{{ x.mail_estatus_id.country }}</td>
+                <td>{{ x.mail_estatus_id.timestamp }}</td>
+                <td>{{ x.web_estatus_id.ip_address }}</td>
+                <td>{{ x.web_estatus_id.country }}</td>
+                <td>{{ x.web_estatus_id.language }}</td>
+                <td>{{ x.web_estatus_id.timestamp }}</td>
+                <td>{{ x.pc_estatus_id.ip_address }}</td>
+                <td>{{ x.pc_estatus_id.country }}</td>
+                <td>{{ x.pc_estatus_id.timestamp }}</td>
+
+        {% endif %}
+    
+    {% endfor %}
+
+
+
+</table>

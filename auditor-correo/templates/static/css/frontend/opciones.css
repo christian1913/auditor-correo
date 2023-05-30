@@ -1,0 +1,48 @@
+.opciones-change {
+    color: var(--color-grey);
+    line-height: 1.2;
+    font-size: 14px;
+    font-weight: 300;
+    text-decoration: underline;
+    margin-right: 10px;
+}
+.opciones-change:hover {
+    cursor: pointer;
+    color: var(--color-black);
+}
+.opciones-usuario .button{
+    padding: 8px 10px;
+    background: var(--color-grey);
+    margin-top: 5px;
+}
+.opciones-usuario > .box-body {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.opciones-usuario > .box-body> .opciones-content {
+    margin-bottom: 10px;
+}
+
+.opciones-usuario > .box-body > .opciones-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.opciones-usuario > .box-body > .opciones-content img {
+    filter: invert(35%) sepia(40%) saturate(6440%) hue-rotate(352deg) brightness(95%) contrast(90%); /*orange*/
+    margin-right: 10px;
+    width: 17px;
+}
+
+.opciones-usuario > .box-body > .opciones-content > h6 {
+    margin-right: 10px;
+}
+
+.opciones-usuario .popup-content form > .flex {
+    flex-direction: column;
+    display: flex;
+}
+.opciones-usuario .popup-content form > .flex h6 {
+    margin-top: 20px;
+}

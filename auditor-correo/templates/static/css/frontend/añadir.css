@@ -1,0 +1,45 @@
+.boton{
+  background-color: var(--color-grey-hard);
+  color: #fff;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 100%;
+  padding: 40px;
+  font-size: 14px;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  width: 75px;
+  height: 75px;
+}
+
+.add-icon {
+  filter: invert(100%) sepia(5%) saturate(6447%) hue-rotate(277deg) brightness(114%) contrast(103%); /*white*/
+  width: 28px;
+  margin-top: -10px;
+}
+
+.add-client {
+  bottom: 65px;
+  background-color: #6429d1;
+  display: none;
+}
+
+.add-email {
+  bottom: 130px;
+  background-color: #6429d1;
+  display: none;
+}
+
+.boton:hover{
+  background-color: #50b484;
+}
+.boton a{
+  color:#fff;
+  text-decoration:none;
+  padding:5px 5px 5px 0;
+}

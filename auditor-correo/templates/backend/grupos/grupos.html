@@ -1,0 +1,104 @@
+
+{% extends "backend/base.html" %}
+{% load static %}
+{% block content %}
+
+{% block añadir-grupo %}
+{% include 'backend/grupos/añadir-grupo.html' %}
+{% endblock %}
+
+<div class="titleOptions">
+    <h1 class="sectionTitle uppercase">GRUPOS</h1>
+    <button class="addNewItem" onclick="toggleModal('grupo-modal')">+ Añadir grupo</button>
+</div>
+
+{% for c in datos %}
+    <div class="box">
+        <div class="box-header">
+            <div class="box-header-info">
+                <div><img class="sidebar-icon" src="{% static 'images/frontend/icons/building.svg' %}"></div>
+                <div><h6 class="green email-text">{{ c.nombre }}</h6></div>
+            </div>
+            <div>
+                <!--button manage client -->
+                <a href="{% url 'correos' id=c.id %}" class="button blue-btn"><h6>Gestionar</h6></a> 
+                <!--button change name -->
+                <button onclick="toggleModal('editar{{c.id}}') "class="button blue-btn"><h6>Editar</h6></button> 
+                <!--button delete -->
+                <button onclick="toggleModal('delete{{c.id}}') "class="button red-btn"><h6>Eliminar</h6></button>
+            </div>
+        </div>
+        <div class="box-body box-body-left">
+            
+
+            <div class="pc-box">
+                <div>
+                    
+                    <!--popup button delete-->
+                    <div id="delete{{c.id}}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('delete{{c.id}}')" class="close">&times;</span>
+                            <form action="{% url 'grupos' %}" method="post" style="text-align: center;">
+
+                                <h5>Introduce "delete" para confirmar la eliminación del correo <span class="green">{{ c.nombre }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-grupo" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
+                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="delete">
+                                    <input type="submit" class="submit" value="Eliminar">
+                                </div>
+                            
+                            </form>
+
+                        </div>
+                    </div>   
+
+
+                    <!--popup button editar-->
+                    <div id="editar{{c.id}}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('editar{{c.id}}')" class="close">&times;</span>
+                            <form action="{% url 'grupos' %}" method="post" style="text-align: center;">
+
+                                <h5>Introduce el nuevo nombre para el grupo <span class="green">{{ c.nombre }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="editar-grupo" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
+                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="nombre">
+                                    <input type="submit" class="submit" value="Editar">
+                                </div>
+                            
+                            </form>
+
+                        </div>
+                    </div>   
+                    
+                    <!--popup button send-->
+                    <div id="changeName{{c.id}}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('changeName{{c.id}}')" class="close">&times;</span>
+                            <form action="#" method="post" style="text-align: center;">
+                                <h5>Introduce "enviar" para enviar un correo <span class="green">{{ c.nombre }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="editar-grupo" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
+                                        {{ form_grupo.nombre }}
+                                    <input type="submit" class="submit" value="Enviar">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+
+
+{% endblock %}

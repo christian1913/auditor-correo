@@ -1,0 +1,237 @@
+main { 
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/**
+    *  Style for the block that will be used to contain all the charts of the page
+*/
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+/**
+    *  Style for the block that will be used to display the chart title and the chart
+*/
+.chart {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+    margin: 5px 0px;
+}
+
+.chart h5 {
+    margin-bottom: 20px;
+}
+
+/**
+    *  Style for the block that will be used to display multiple charts
+*/
+.chartSeries {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top:20px;
+}
+
+/**
+    *  Style for the block that will be used to display the line chart
+*/
+.lineChartContainer {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 800px;
+}
+
+/**
+    *  Style for the block that will be used to display the doughnut chart
+*/
+.doughnutChartContainer {
+    width: 60%;
+}
+
+/* Filter */
+.filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: none !important;
+    background: none !important;
+}
+
+.filterTitle {
+    color: var(--color-black);
+    margin-right: 10px;
+}
+
+.filter > span {
+    color: #707070;
+}
+
+.filter > div.selectorContainer {
+    background-color: var(--color-white);
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.filter > div.selectorContainer div {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 280px;
+}
+
+.filter > div.selectorContainer > span {
+    color: #2F2F2F;
+}
+
+.selector {
+    background-color: var(--color-grey-soft);
+    border: none;
+    color: #2F2F2F;
+    font-size: 11px;
+    font-family: inherit;
+    padding: 3px;
+}
+
+.selector ul {
+    margin:0;
+    padding:0;
+    list-style-type:none;
+    display:inline-block;
+    z-index: 1;
+    width: 100%;
+    background: var(--color-grey-soft);
+    border: 3px solid var(--color-grey-soft);
+}
+
+#serviceList,
+#clientsList {
+    background: var(--color-white);
+    padding: 3px;
+}
+
+.selector ul li {
+    position:relative;
+    /* float:left; */
+    display:inline-block;
+}
+
+.selector li > a:after,
+.selector li > .user-icon:after { 
+    margin-left: 10px;
+}
+
+.selector li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.selector li > a:only-child:after,
+.selector li > div > .user-icon > svg:only-child:after
+{ content: ''; }
+
+.selector ul li a {
+    display:inline-block;
+    text-decoration:none;
+    font-family: Poppins,sans-serif;
+    font-size: 11px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.selector ul li a img {
+    filter: invert(43%) sepia(41%) saturate(0%) hue-rotate(218deg) brightness(92%) contrast(87%);
+}
+
+.selector ul li a h6 {
+    color: #2F2F2F;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inactive {
+    display: none !important;
+    height: 0px !important;
+    transition: height 0.5s;
+}
+
+.active {
+    display: block !important;
+    height: auto !important;
+    transition: height 0.5s;
+}
+
+.filterList {
+    position: absolute;
+    top: 25px;
+    left: -6px;
+    width: 115px;
+    height: 200px;
+    overflow: auto;
+}
+
+.filterList > li {
+    border: none;
+    background-color: var(--color-white);
+    color: #2F2F2F;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 6px;
+    width: calc(100% - 12px);
+    cursor: pointer;
+}
+
+.filterList > li:hover h6 {
+    color: var(--color-orange);
+}
+
+.filterList > li > a {
+    color: #2F2F2F;
+    text-decoration: none;
+}
+
+.filterList > li > a:hover {
+    color: #2F2F2F;
+}
+
+.plot-title {
+    display: flex;
+    justify-content: center;
+}
+
+.plot-title h5 {
+    color: var(--color-black);
+}
+
+.filterTag {
+    margin: 0px 10px 0px 20px;
+}
+
+.chart-title {
+    margin-bottom: 10px;
+}
+
+.chart-counter {
+    margin-top: 10px;
+}

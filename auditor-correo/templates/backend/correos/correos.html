@@ -1,0 +1,167 @@
+{% extends "backend/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="titleOptions">
+    <h1 class="sectionTitle uppercase">grupos | {{datos.grupo}}</h1>
+    <button class="addNewItem" onclick="toggleModal('añadir-correo')">Añadir correo</button>
+</div>
+
+{% for i in datos.correos %}
+    <div class="box">
+        <div class="box-header">
+            <div class="box-header-info">
+                <div><img class="mail-icon" src="{% static 'images/frontend/icons/mail.svg' %}"></div>
+                <div><h6 class="orange email-text">{{ i.correo }}</h6></div>
+                <!--dropdown icons-->
+                <div id="drop-icon-{{ forloop.counter }}" class="drop-icon" onclick="dropIconPress('{{ forloop.counter }}')">
+                    <div>
+                        <span class="subtitle"><h6>Intentos</h6></span>
+                        <img id="drop-down-{{ forloop.counter }}" class="drop-down icon" src="{% static 'images/frontend/correos/drop-down.svg' %}">
+                        <img id="drop-up-{{ forloop.counter }}" class="drop-up icon" src="{% static 'images/frontend/correos/drop-up.svg' %}">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <!--button change group -->
+                {% if datos.grupos|length > 0 %}
+                <button onclick="showList('clientsList{{i.id}}')" class="button blue-btn buttonSelector">
+                    Cambiar grupo
+                    <ul class="inactive filterList emailDepartmentList" id="clientsList{{i.id}}">
+                        {% for d in datos.grupos %}
+                            <form method="POST" action="{% url 'correos-receptores' id=i.grupo.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="id-correo" value="{{i.id}}">
+                                <input type="hidden" name="id-grupo" value="{{d.id}}">
+                                <input type="hidden" name="instruccion" value="cambiar-correo">
+                                <li>
+                                    <div class="itemList">
+                                        <input  type="submit" value="{{ d.nombre }}"/>
+                                    </div>
+                                </li>
+                            </form>
+                        {% endfor %}
+                    </ul>
+                </button>
+                {% endif %}
+                <!--button send-->
+                <button onclick="toggleModal('enviar{{i.id}}') "class="button blue-btn"><h6>Enviar correo</h6></button> 
+                <!--button delete-->
+                <button onclick="toggleModal('delete{{i.id}}') "class="button red-btn"><h6>Eliminar</h6></button>
+            </div>
+        </div>
+        <div class="box-body box-body-left">
+            
+
+            <div class="pc-box">
+                <div>
+                    
+                    <!--popup button delete-->
+                    <div id="delete{{i.id}}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('delete{{i.id}}')" class="close">&times;</span>
+                            <form action="{% url 'correos' id=i.grupo.id %}" method="post" style="text-align: center;">
+                                <h5>Introduce "delete" para confirmar la eliminación del correo <span class="orange">{{ i.correo }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-correo" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ i.id }}" type="hidden">
+                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="delete">
+                                    <input type="submit" class="submit" value="Eliminar">
+                                </div>
+                            
+                            </form>
+
+                        </div>
+                    </div>   
+                    
+                    <!--popup button send-->
+                    <div id="enviar{{i.id}}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('enviar{{i.id}}')" class="close">&times;</span>
+                            <form action="{% url 'auditar' %}" method="post" style="text-align: center;">
+                                <h5>Introduce "enviar" para enviar un correo a <span class="orange">{{ i.correo }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="enviar-correo" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ i.id }}" type="hidden">
+                                    <input type="text" name="enviar">
+                                    <select name="plantilla">
+                                        {% for plantillas in datos.plantillas %}
+                                            <option value="{{plantillas.id}}">{{plantillas.servicio}}</option>
+                                        {% endfor %}
+                                    </select>      
+                                    <input type="submit" class="submit" value="Enviar">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            <div id="pc-options-box-{{ forloop.counter }}" class="pc-options-box">
+
+                {% block tabla %}
+                {% include 'backend/correos/tabla_correo.html' %}
+                {% endblock %}
+
+            </div>
+        </div>
+    </div>
+    <div id="añadir-correo" class="modal popupContentWrapper">
+        <div class="popup-content">
+            <span onclick="toggleModal('añadir-correo')" class="close">&times;</span>
+            <form action="{% url 'correos' id=i.grupo.id %}" method="post" style="text-align: center;">
+                <h5>Escriba el nombre del correo que desea añadir al grupo:<span class="orange">{{datos.grupo}}</span>:</h5>
+                <div>
+                    {% csrf_token %}
+                    <input autocomplete="on" name="instruccion" id="instruccion" value="añadir-correo" type="hidden">
+                    <input type="hidden" name="grupo" value="{{datos.grupo_id}}">
+                    <input autocomplete="on" name="id" id="id" value="all" type="hidden">
+                    <input type="text" name="correo">
+                    <input type="submit" class="submit" value="Añadir">
+                </div>
+            </form>
+        </div>
+    </div>
+    
+{% endfor %}
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("click", function(event) {
+            const $trigger = document.querySelectorAll(".buttonSelector");
+            let clickedOutside = true;
+            $trigger.forEach(element => {
+                if (element === event.target || element.contains(event.target)) {
+                    clickedOutside = false;
+                }
+            });
+            if (clickedOutside) {
+                const $dropdowns = document.querySelectorAll(".filterList");
+                $dropdowns.forEach(element => {
+                    if (element.classList.contains("active")) {
+                        element.classList.remove("active")
+                        element.classList.add("inactive")
+                    }
+                });
+            }
+        });
+    });
+
+    function showList(elementId)
+    {
+        if (document.getElementById(elementId).classList.contains("inactive")) {
+            document.getElementById(elementId).classList.remove("inactive");
+            document.getElementById(elementId).classList.add("active");
+        } else {
+            document.getElementById(elementId).classList.remove("active");
+            document.getElementById(elementId).classList.add("inactive");
+        }
+    }
+</script>
+
+
+{% endblock %}

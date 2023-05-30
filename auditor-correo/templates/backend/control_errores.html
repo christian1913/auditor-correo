@@ -1,0 +1,10 @@
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.level == 25%}success{% elif message.level == 20%}neutral{%elif message.level == 30%}warning{%endif%}" id="msjPopUp" >
+            <span class="alert-closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+            {{message}}
+        </div> 
+        {% endfor %}
+    </ul>
+{% endif %}

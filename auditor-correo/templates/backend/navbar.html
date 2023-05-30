@@ -1,0 +1,12 @@
+{% load static %}
+<nav class="navbar">
+  <div>
+    <!--Logout-->
+    <form class="logout-form" action="{% url 'logout' %}">
+      <button class="logout-button" type="submit">
+        <div><h6>Logout</h6></div>
+        <div><img class="logout-icon" src="{% static 'images/logout.svg' %}"></div>
+      </button>
+    </form>
+  </div>
+</nav>
