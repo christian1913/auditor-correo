@@ -11,7 +11,7 @@ from backend.smtp.models import Enviados
 
 
 
-def mail_status(request, int=None, imagen=None):
+def mail_status(request, int=None):
 
     enviado = Enviados.objects.get(id=int)
     data = registrar(request)
