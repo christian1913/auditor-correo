@@ -36,9 +36,9 @@ def auditar(request):
 
         messages.add_message(request, messages.SUCCESS, 'Correo enviado correctamente')
 
-        link_mail = 'http://localhost:8000/logo/'+ str(enviado.id) + plantilla.imagen.url
-        link_web = 'http://localhost:8000/ruta/' + str(enviado.id)
-        link_pc = 'http://localhost:8000/registro-documento/' + str(enviado.id)
+        link_mail = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/logo/'+ str(enviado.id) 
+        link_web = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/ruta/' + str(enviado.id)
+        link_pc = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/registro-documento/' + str(enviado.id)
 
         asunto = plantilla.asunto
         contenido = plantilla.mensaje
