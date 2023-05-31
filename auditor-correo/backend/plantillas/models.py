@@ -1,19 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from backend.opciones.models import Emisores
 
 # Create your models here.
  
-class Emisores(models.Model):
-    id = models.AutoField(primary_key=True)
-    correo = models.EmailField(max_length=35)
-    contraseña = models.CharField(max_length=25)
-    smtp = models.CharField(max_length=35)
-    puerto = models.CharField(max_length=10)
-    propietario = models.ForeignKey(User, on_delete=models.CASCADE)  
-    
-    def __str__(self):
-        return self.correo 
 
 class Plantillas(models.Model):
 
@@ -27,10 +17,11 @@ class Plantillas(models.Model):
     nombre = models.CharField(max_length=50)
     asunto = models.CharField(max_length=100)
     mensaje = models.TextField()
-    imagen = models.ImageField(upload_to='ruta/para/subir/')
+    imagen = models.ImageField(upload_to='imagenes')
     plantilla = models.TextField()
     script = models.TextField(null=True, blank=True)
     emisor = models.ForeignKey(Emisores, on_delete=models.CASCADE)
+    propietario = models.ForeignKey(User, null=True, on_delete=models.CASCADE)  
 
     def __str__(self):
         return self.nombre

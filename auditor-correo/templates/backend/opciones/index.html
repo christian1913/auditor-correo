@@ -1,0 +1,140 @@
+
+{% extends "backend/base.html" %}
+{% load static %}
+{% block content %}
+<div class="headerContainer">
+    <div>
+        <h1 class="sectionTitle uppercase">OPCIONES</h1>
+    </div>
+</div>
+<div class="box opciones-usuario">
+    <div class="box-header">
+        <h6 class="orange"  >Usuario</h6>
+    </div>
+    <div class="box-body box-body-left">
+        <div class="opciones-content">
+            <img class="add-icon" src="{% static 'images/frontend/icons/user-underline.svg' %}">
+            <h6>{{datos.usuario}}</h6>
+            <span class="opciones-change" onclick="toggleModal('user_username')">cambiar usuario</span>
+        </div>
+        <div class="opciones-content">
+            <img class="add-icon" src="{% static 'images/frontend/icons/key.svg' %}">
+            <span class="opciones-change" onclick="toggleModal('user_pass')">cambiar contraseña</span>
+        </div>
+    </div>
+    <!--popup usuario-->
+    <div id="user_username" class="modal popupContentWrapper">
+        <div class="popup-content">
+            <span onclick="toggleModal('user_username')" class="close">&times;</span>
+            <form action="{% url 'opciones' %}" method="post" style="text-align: center;">
+                <h5>Editar el nombre de usuario de <span class="orange">{{ datos.usuario }}</span>:</h5>
+                <div>
+                    {% csrf_token %}
+                    <input autocomplete="on" name="instruccion" id="instruccion" value="editar-usuario" type="hidden">
+                    <input autocomplete="on" name="id" id="id" value="{{ datos.usuario }}" type="hidden">
+                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="usuario" placeholder="{{datos.usuario}}">
+                    <input type="submit" class="submit" value="Editar">
+                </div>            
+            </form>
+        </div>
+    </div>
+    <!--popup pass-->
+    <div id="user_pass" class="modal popupContentWrapper">
+        <div class="popup-content">
+            <span onclick="toggleModal('user_pass')" class="close">&times;</span>
+            <form action="{% url 'opciones' %}" method="post" style="text-align: center;">
+                <h5>Cambiar la contraseña del usuario <span class="orange">{{ datos.usuario }}</span>:</h5>
+                <div class="flex">
+                    {% csrf_token %}
+                    <input autocomplete="on" name="instruccion" id="instruccion" value="editar-contraseña" type="hidden">
+                    <h6>Antigua contraseña:</h6>
+                    <input type="password" class="Before-FS" autocomplete="off" name="pass-antigua" placeholder="Antigua contraseña">
+                    <h6>Nueva contraseña:</h6>
+                    <input type="password" class="Before-FS" autocomplete="off" name="password-nueva-1" placeholder="Nueva contraseña">
+                    <input type="password" class="Before-FS" autocomplete="off" name="password-nueva-2" placeholder="Repite la nueva contraseña">
+                    <input type="submit" class="submit" value="Cambiar">
+                </div>                
+            </form>
+        </div>
+    </div>
+</div>
+<div class="box opciones-usuario">
+    <div class="box-header">
+        <h6 class="orange">Correos emisores</h6>
+    </div>
+    <div class="box-body box-body-left">
+        {% for c in datos.emisores %}
+            <div class="opciones-content">
+                <img class="add-icon" src="{% static 'images/frontend/icons/mail.svg' %}">
+                <h6>{{c}}</h6>
+                <span class="opciones-change" onclick="toggleModal('mail_edit_{{c.id}}')">editar</span>
+                <span class="opciones-change" onclick="toggleModal('mail_delete_{{c.id}}')">eliminar</span>
+            </div>
+            <!--popup edit-->
+            <div id="mail_edit_{{c.id}}" class="modal popupContentWrapper">
+                <div class="popup-content">
+                    <span onclick="toggleModal('mail_edit_{{c.id}}')" class="close">&times;</span>
+                    <form action="{% url 'opciones' %}" method="post" style="text-align: center;">
+                        <h5>Editar el correo emisor <span class="orange">{{ c }}</span>.</h5>
+                        <div class="flex">
+                            {% csrf_token %}
+                            <input autocomplete="on" name="instruccion" id="instruccion" value="editar-correo-emisor" type="hidden">
+                            <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
+                            <h6>Correo:</h6>
+                            <input type="text" class="Before-FS" autocomplete="off" name="correo">
+                            <h6>Contraseña:</h6>
+                            <input type="password" class="Before-FS" autocomplete="off" name="contraseña">
+                            <h6>Dominio:</h6>
+                            <input type="text" class="Before-FS" autocomplete="off" name="smpt">
+                            <h6>Puerto:</h6>
+                            <input type="text" class="Before-FS" autocomplete="off" name="puerto">
+                            <input type="submit" class="submit" value="Editar">
+                        </div>                
+                    </form>
+                </div>
+            </div>
+            <!--popup delete-->
+            <div id="mail_delete_{{c.id}}" class="modal popupContentWrapper">
+                <div class="popup-content">
+                    <span onclick="toggleModal('mail_delete_{{c.id}}')" class="close">&times;</span>
+                    <form action="{% url 'opciones' %}" method="post" style="text-align: center;">
+                        <h5>Introduce "eliminar" para eliminar el emisor <span class="orange">{{ c }}</span>:</h5>
+                        <div>
+                            {% csrf_token %}
+                            <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-correo-emisor" type="hidden">
+                            <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
+                            <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
+                            <input type="submit" class="submit" value="Eliminar">
+                        </div>            
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+        <button class="button blue-btn" onclick="toggleModal('mail_add')">
+            <h6>Añadir correo emisor</h6>
+        </button>
+        <!--popup add email-->
+        <div id="mail_add" class="modal popupContentWrapper">
+            <div class="popup-content">
+                <span onclick="toggleModal('mail_add')" class="close">&times;</span>
+                <form action="{% url 'opciones' %}" method="post" style="text-align: center;">
+                    <h5>Añadir nuevo correo emisor:</h5>
+                    <div class="flex">
+                        {% csrf_token %}
+                        <input autocomplete="on" name="instruccion" id="instruccion" value="añadir-correo-emisor" type="hidden">
+                        <h6>Correo:</h6>
+                        <input type="text" class="Before-FS" autocomplete="off" name="correo">
+                        <h6>Contraseña:</h6>
+                        <input type="password" class="Before-FS" autocomplete="off" name="contraseña">
+                        <h6>Dominio:</h6>
+                        <input type="text" class="Before-FS" autocomplete="off" name="smpt">
+                        <h6>Puerto:</h6>
+                        <input type="text" class="Before-FS" autocomplete="off" name="puerto">
+                        <input type="submit" class="submit" value="Añadir">
+                    </div>                
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -5,7 +5,7 @@ urlpatterns = [
 
     # Paginas
 
-    path('grupos/<str:id>', views.correos, name='correos'),
+    path('grupos/<str:id>', views.index, name='correos'),
 
     
 ]

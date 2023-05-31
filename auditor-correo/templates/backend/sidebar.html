@@ -1,0 +1,34 @@
+{% load static %}
+<section class="sidebar-wrapper">
+    <!--header-->
+    <div class="logo">
+        <div>
+            <h1 class="orange">AUDITOR CORREO</h1>
+        </div>
+    </div>   
+    <!--menu options-->
+    <ul class="nav">
+
+        <!--Grupos-->
+        <li class="#">
+            <a href="{% url 'grupos' %}">
+                <div><img class="sidebar-icon" src="{% static 'images/frontend/icons/building.svg' %}"></div>
+                <div class="cut-text"><h5 class="uppercase">GRUPOS</h5></div>
+            </a>
+        </li>
+        <!--plantillas-->
+        <li class="#">
+            <a href="{% url 'plantillas' %}">
+                <div><img class="sidebar-icon" src="{% static 'images/frontend/icons/box.svg' %}"></div>
+                <div class="cut-text"><h5 class="uppercase">PLANTILLAS</h5></div>
+            </a>
+        </li>
+        <!-- opciones -->
+        <li class="#">
+            <a href="{% url 'opciones' %}">
+                <div><img class="sidebar-icon" src="{% static 'images/frontend/icons/gear.svg' %}"></div>
+                <div class="cut-text"><h5 class="uppercase">OPCIONES</h5></div>
+            </a>
+        </li> 
+    </ul>
+</section>

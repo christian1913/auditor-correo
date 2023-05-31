@@ -6,7 +6,7 @@ from backend.grupos.models import Grupos
 
 
 @login_required(login_url='/accounts/login/')
-def grupos(request):
+def index(request):
 
 
     if request.method == 'GET':
@@ -60,7 +60,7 @@ def grupos(request):
             'datos' : datos,
         }
 
-    return render(request, 'backend/grupos/grupos.html', data)
+    return render(request, 'backend/grupos/index.html', data)
 
 
 # Funcion obtener datos
@@ -109,7 +109,7 @@ def editar_grupo(request):
 @login_required(login_url='/accounts/login/')
 def eliminar_grupo(request):
 
-    if request.POST['delete'] == 'delete':
+    if request.POST['eliminar'] == 'eliminar':
         
         try:
             usuario = User.get_username(request.user)

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'backend.registradores',
     'backend.plantillas',
     'backend.smtp',
+    'backend.opciones',
     'frontend',
 ]
 

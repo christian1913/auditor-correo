@@ -12,17 +12,21 @@
     <link href="{% static 'css/frontend/correos.css'%}" rel="stylesheet" />
     <link href="{% static 'css/frontend/popup.css' %}" rel="stylesheet" />
     <link href="{% static 'css/frontend/headerEmpresa.css'%}" rel="stylesheet" />
-    <link href="{% static 'css/frontend/dashboard.css'%}" rel="stylesheet" />
     <link href="{% static 'css/frontend/header.css'%}" rel="stylesheet" />
     <link href="{% static 'css/frontend/plantillas.css'%}" rel="stylesheet" />
     <link href="{% static 'css/frontend/opciones.css'%}" rel="stylesheet" />
 
 </head>
+
 <body>
 
     {% load static %}
 
-    {% include 'backend/control_errores.html' %}
+    {% block sidebar-dashboard %}
+    {% include 'backend/sidebar.html' %}
+    {% endblock %}
+
+    {% include 'backend/control-errores.html' %}
    
 
     <section class="main-panel">

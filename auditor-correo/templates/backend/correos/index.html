@@ -61,12 +61,12 @@
                         <div class="popup-content">
                             <span onclick="toggleModal('delete{{i.id}}')" class="close">&times;</span>
                             <form action="{% url 'correos' id=i.grupo.id %}" method="post" style="text-align: center;">
-                                <h5>Introduce "delete" para confirmar la eliminación del correo <span class="orange">{{ i.correo }}</span>:</h5>
+                                <h5>Introduce "eliminar" para confirmar la eliminación del correo <span class="orange">{{ i.correo }}</span>:</h5>
                                 <div>
                                     {% csrf_token %}
                                     <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-correo" type="hidden">
                                     <input autocomplete="on" name="id" id="id" value="{{ i.id }}" type="hidden">
-                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="delete">
+                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
                                     <input type="submit" class="submit" value="Eliminar">
                                 </div>
                             
@@ -103,7 +103,7 @@
             <div id="pc-options-box-{{ forloop.counter }}" class="pc-options-box">
 
                 {% block tabla %}
-                {% include 'backend/correos/tabla_correo.html' %}
+                {% include 'backend/correos/tabla-correo.html' %}
                 {% endblock %}
 
             </div>

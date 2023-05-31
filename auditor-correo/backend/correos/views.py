@@ -10,7 +10,7 @@ from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, 
 
 
 @login_required(login_url='/accounts/login/') 
-def correos(request, id=None):
+def index(request, id=None):
 
 
     if request.method == 'GET':
@@ -67,7 +67,7 @@ def correos(request, id=None):
 
         }
 
-    return render(request, 'backend/correos/correos.html', data)
+    return render(request, 'backend/correos/index.html', data)
 
 
 # Funcion obtener datos correos
@@ -78,7 +78,7 @@ def obtener_datos_correos(request, id):
     grupo = Grupos.objects.filter(id=id)[0]
     grupos = Grupos.objects.filter(propietario__username=usuario).exclude(id=id)
     nombre_grupos = [{'id' : d.id, 'nombre' : d.nombre} for d in grupos ]
-    plantillas = Plantillas.objects.all()
+    plantillas = Plantillas.objects.filter(propietario__username=usuario)
     lista_plantillas = [{'id' : d.id, 'nombre' : d.nombre } for d in plantillas ]
     estatus_web = Estatus_Web.objects.filter(enviado__propietario__username=usuario)
     estatus_mail = Estatus_Mail.objects.filter(enviado__propietario__username=usuario)
@@ -129,7 +129,7 @@ def obtener_datos_correos(request, id):
 @login_required(login_url='/accounts/login/')
 def eliminar_correo(request):
     
-    if request.POST['delete'] == 'delete':
+    if request.POST['eliminar'] == 'eliminar':
 
         try:
 

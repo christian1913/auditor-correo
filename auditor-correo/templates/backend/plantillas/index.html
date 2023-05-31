@@ -1,0 +1,101 @@
+
+{% extends "backend/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="titleOptions">
+    <h1 class="sectionTitle uppercase">PLANTILLAS</h1>
+    <a href="{% url 'añadir-plantilla' %}"><button class="addNewItem" >+ Añadir plantilla</button></a>
+</div>
+
+<script>
+    function showPreview(type, id) {
+        let element = document.getElementById(type + id);
+        if (element.classList.contains('active')) element.classList.remove('active');
+        else element.classList.add('active');
+
+        if (type == "previewContent" && document.getElementById("previewEmail" + id).classList.contains('active')) document.getElementById("previewEmail" + id).classList.remove('active');
+        else if (type == "previewEmail" && document.getElementById("previewContent" + id).classList.contains('active')) document.getElementById("previewContent" + id).classList.remove('active');
+    }
+</script>
+
+<style>
+    body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+</style>
+
+{% for i in datos %}
+    <div class="box">
+        <div class="box-header">
+            <div class="box-header-info">
+                <div><img class="mail-icon" src="{% static 'images/frontend/icons/mail.svg' %}"></div>
+                <div><h6 class="orange email-text">{{ i.nombre }}</h6></div>
+                <!--dropdown icons-->
+                <div id="drop-icon-{{ forloop.counter }}" class="drop-icon" onclick="dropIconPress('{{ forloop.counter }}')">
+                    <div>
+                        <span class="subtitle"><h6>Información</h6></span>
+                        <img id="drop-down-{{ forloop.counter }}" class="drop-down icon" src="{% static 'images/frontend/correos/drop-down.svg' %}">
+                        <img id="drop-up-{{ forloop.counter }}" class="drop-up icon" src="{% static 'images/frontend/correos/drop-up.svg' %}">
+                    </div>
+                </div>
+            </div>
+            <div>
+              
+                <a href="{% url 'editar-plantilla' id=i.id %}"><button class="button blue-btn"><h6>Editar plantilla</h6></button></a>
+                <!--button delete-->
+                <button onclick="toggleModal('delete{{ i.id }}') "class="button red-btn"><h6>Eliminar</h6></button>
+            </div>
+        </div>
+        <div class="box-body box-body-left">
+            <div class="pc-box">
+                <div>
+                    
+                    <!--popup button delete-->
+                    <div id="delete{{ i.id }}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('delete{{ i.id }}')" class="close">&times;</span>
+                            <form action="{% url 'plantillas' %}" method="post" style="text-align: center;">
+                                <h5>Introduce "eliminar" para eliminar la plantilla <span class="orange">{{ i.nombre }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-plantilla" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ i.id }}" type="hidden">
+                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
+                                    <input type="submit" class="submit" value="Eliminar">
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>                 
+                </div>
+                <div id="pc-options-box-{{ forloop.counter }}" class="pc-options-box">
+
+                    {% block tabla %}
+                    {% include 'backend/plantillas/tabla-plantilla.html' %}
+                    {% endblock %}
+        
+                    <div class="previewWrapper">
+                        <div class="previewTemplateButtons">
+                            <button class="previewTitle" onclick="showPreview('previewContent', '{{i.id}}')"> Vista previa página web </button>
+                            <button class="previewTitle" onclick="showPreview('previewEmail', '{{i.id}}')"> Vista previa email </button>
+                        </div>
+                        <div id="previewContent{{i.id}}" class="previewContent" style="height: auto !important">
+                            <iframe src="{% url 'previsualizar-plantilla' id=i.id %}" sandbox></iframe>
+                        </div>
+                        <div id="previewEmail{{i.id}}" class="previewContent" style="height: auto !important">
+                            <iframe src="{% url 'previsualizar-mensaje' id=i.id %}" sandbox></iframe>
+                        </div>
+                    </div>
+
+                    
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% endblock %}

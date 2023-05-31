@@ -40,12 +40,12 @@
                             <span onclick="toggleModal('delete{{c.id}}')" class="close">&times;</span>
                             <form action="{% url 'grupos' %}" method="post" style="text-align: center;">
 
-                                <h5>Introduce "delete" para confirmar la eliminación del correo <span class="green">{{ c.nombre }}</span>:</h5>
+                                <h5>Introduce "eliminar" para confirmar la eliminación del correo <span class="green">{{ c.nombre }}</span>:</h5>
                                 <div>
                                     {% csrf_token %}
                                     <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-grupo" type="hidden">
                                     <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
-                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="delete">
+                                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
                                     <input type="submit" class="submit" value="Eliminar">
                                 </div>
                             
