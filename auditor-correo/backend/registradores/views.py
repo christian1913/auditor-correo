@@ -9,10 +9,13 @@ from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, 
 from backend.plantillas.models import Plantillas
 from backend.smtp.models import Enviados
 import os
+import mimetypes
+
+
+
 
 
 def mail_status(request, int=None):
-
     enviado = Enviados.objects.get(id=int)
     data = registrar(request)
 
@@ -28,17 +31,18 @@ def mail_status(request, int=None):
         fecha=data["fecha"]
     )
 
-
     try:
         plantilla_id = enviado.plantilla.id
         image = Plantillas.objects.get(id=plantilla_id).imagen
 
-        file_extension = os.path.splitext(image.path)[1]  # Obtiene la extensión del archivo
-        print(file_extension)
     except (Estatus_Mail.DoesNotExist, Plantillas.DoesNotExist):
         raise Http404("No se encontró la imagen")
 
-    return FileResponse(open(image.path, 'rb'), content_type=f"image/{file_extension}")
+    with open(image.path, 'rb') as file:
+        response = HttpResponse(file.read(), content_type=mimetypes.guess_type(image.path)[0])
+        response['Content-Disposition'] = 'inline'  # Muestra la imagen en el navegador
+
+    return response
 
 
 @csrf_exempt

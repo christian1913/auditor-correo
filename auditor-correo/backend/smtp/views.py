@@ -33,13 +33,11 @@ def auditar(request):
         Estatus_PC.objects.create(enviado=enviado)
         plantilla = Plantillas.objects.get(id=request.POST['plantilla'])
         plantilla_id = enviado.plantilla.id
-        image = Plantillas.objects.get(id=plantilla_id).imagen
 
-        file_extension = os.path.splitext(image.path)[1]
 
         messages.add_message(request, messages.SUCCESS, 'Correo enviado correctamente')
 
-        link_mail = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/logo/'+ str(enviado.id) +str(file_extension)
+        link_mail = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/logo/'+ str(enviado.id)
         link_web = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/ruta/' + str(enviado.id)
         link_pc = 'http://http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/registro-documento/' + str(enviado.id)
 
