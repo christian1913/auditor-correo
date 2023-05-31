@@ -8,7 +8,7 @@ from django.template import Context, Template
 from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
 from backend.plantillas.models import Plantillas
 from backend.smtp.models import Enviados
-
+import os
 
 
 def mail_status(request, int=None):
@@ -33,11 +33,12 @@ def mail_status(request, int=None):
         plantilla_id = enviado.plantilla.id
         image = Plantillas.objects.get(id=plantilla_id).imagen
 
+        file_extension = os.path.splitext(image.path)[1]  # Obtiene la extensión del archivo
+        print(file_extension)
     except (Estatus_Mail.DoesNotExist, Plantillas.DoesNotExist):
         raise Http404("No se encontró la imagen")
 
-
-    return FileResponse(open(image.path, 'rb'))
+    return FileResponse(open(image.path, 'rb'), content_type=f"image/{file_extension}")
 
 
 @csrf_exempt
