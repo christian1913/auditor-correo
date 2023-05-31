@@ -76,6 +76,7 @@ def añadir(request):
             if 'imagen' in request.FILES:
                 plantilla.imagen = request.FILES['imagen']
             plantilla.plantilla = request.POST['plantilla']
+            plantilla.redireccion = request.POST['redireccion']
             plantilla.script = request.POST['script']
             plantilla.emisor = emisor
             plantilla.propietario = request.user
@@ -87,14 +88,12 @@ def añadir(request):
             return redirect('plantillas')
             
         except ValidationError as e:
-            print(e)
 
             error_messages = e.message_dict
             for field, errors in error_messages.items():
                 for error in errors:
                     messages.error(request, f"Error en {field}: {error}")
         except Exception as e:
-            print(e)
 
             messages.error(request, str(e))
         
@@ -127,6 +126,7 @@ def editar(request, id=None):
                 plantilla.imagen = request.FILES['imagen']
 
             plantilla.plantilla = request.POST['plantilla']
+            plantilla.redireccion = request.POST['redireccion']
             plantilla.script = request.POST['script']
             plantilla.emisor = emisor  # <- Change is here
 
@@ -137,14 +137,13 @@ def editar(request, id=None):
             return redirect('plantillas')
             
         except ValidationError as e:
-            print(e)
+
 
             error_messages = e.message_dict
             for field, errors in error_messages.items():
                 for error in errors:
                     messages.error(request, f"Error en {field}: {error}")
         except Exception as e:
-            print(e)
 
             messages.error(request, str(e))
 

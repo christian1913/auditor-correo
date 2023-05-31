@@ -19,6 +19,7 @@ class Plantillas(models.Model):
     mensaje = models.TextField()
     imagen = models.ImageField(upload_to='imagenes')
     plantilla = models.TextField()
+    redireccion = models.CharField(max_length=200)
     script = models.TextField(null=True, blank=True)
     emisor = models.ForeignKey(Emisores, on_delete=models.CASCADE)
     propietario = models.ForeignKey(User, null=True, on_delete=models.CASCADE)  

@@ -96,10 +96,11 @@
       <div class="form-group">
         <label for="tipo">Tipo:</label>
         <select class="form-control" required="true" name="tipo" id="tipo">
-          <option value="phishing">Phishing</option>
-          <option value="script">Script</option>
+          <option value="phishing" {% if plantilla.tipo == "phishing" %}selected{% endif %}>Phishing</option>
+          <option value="script" {% if plantilla.tipo == "script" %}selected{% endif %}>Script</option>
         </select>
       </div>
+    
     
       <div class="form-group">
         <label for="nombre">Nombre:</label>
@@ -129,8 +130,15 @@
         <label for="plantilla">Plantilla:</label>
         <textarea class="form-control" required="true" autocomplete="off" name="plantilla" id="plantilla">{{ plantilla.plantilla }}</textarea>
       </div>
-      
-      <div class="form-group">
+
+
+      <div class="form-group" id="redireccionGroup">
+        <label for="redireccion">Redirección:</label>
+        <input type="text" class="form-control" required="true" autocomplete="off" name="redireccion" id="redireccion" value="{{ plantilla.redireccion }}">
+      </div>
+    
+    
+      <div class="form-group" id="scriptGroup">
         <label for="script">Script:</label>
         <textarea class="form-control" autocomplete="off" name="script" id="script">{{ plantilla.script }}</textarea>
       </div>
@@ -147,6 +155,27 @@
       <input type="submit" class="btn btn-primary" value="Aceptar">
     </form>
   
-
+    <script>
+      // Cuando el documento esté listo
+      document.addEventListener('DOMContentLoaded', function() {
+        var tipoElement = document.getElementById('tipo');
+        var scriptGroup = document.getElementById('scriptGroup');
+        var redireccionGroup = document.getElementById('redireccionGroup');
+    
+        tipoElement.addEventListener('change', function() {
+          if (tipoElement.value === 'phishing') {
+            scriptGroup.style.display = 'none';
+            redireccionGroup.style.display = '';
+          } else if (tipoElement.value === 'script') {
+            scriptGroup.style.display = '';
+            redireccionGroup.style.display = 'none';
+          }
+        });
+    
+        // Disparar el evento 'change' una vez al cargar la página para establecer el estado inicial correcto
+        tipoElement.dispatchEvent(new Event('change'));
+      });
+    </script>
+    
 
 {% endblock %}
