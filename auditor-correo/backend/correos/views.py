@@ -95,10 +95,10 @@ def obtener_datos_correos(request, id):
         credenciales = None
         for web in estatus_web:
             try:
-                credenciales = Credenciales.objects.get(estatus_web=web)
+                credenciales = Credenciales.objects.filter(estatus_web=web).first()
             except Credenciales.DoesNotExist:
                 credenciales = None
-
+        print(credenciales)
         dato_enviado = {
             'enviado': enviado,
             'estatus_web': estatus_web,
