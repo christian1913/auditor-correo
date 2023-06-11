@@ -80,47 +80,48 @@ def obtener_datos_correos(request, id):
     nombre_grupos = [{'id' : d.id, 'nombre' : d.nombre} for d in grupos ]
     plantillas = Plantillas.objects.filter(propietario__username=usuario)
     lista_plantillas = [{'id' : d.id, 'nombre' : d.nombre } for d in plantillas ]
-    estatus_web = Estatus_Web.objects.filter(enviado__propietario__username=usuario)
-    estatus_mail = Estatus_Mail.objects.filter(enviado__propietario__username=usuario)
-    estatus_pc = Estatus_PC.objects.filter(enviado__propietario__username=usuario)
 
-    enviados = Enviados.objects.filter(propietario__username=usuario)
+    correos = Correos.objects.filter(propietario__username=usuario, grupo__id=id)
 
-    datos_enviados = []
-    for enviado in enviados:
-        estatus_web = Estatus_Web.objects.filter(enviado=enviado)
-        estatus_mail = Estatus_Mail.objects.filter(enviado=enviado)
-        estatus_pc = Estatus_PC.objects.filter(enviado=enviado)
+    datos = []
+    for correo in correos:
+        enviados = Enviados.objects.filter(propietario__username=usuario, correo=correo)
         
-        credenciales = None
-        for web in estatus_web:
-            try:
-                credenciales = Credenciales.objects.filter(estatus_web=web).first()
-            except Credenciales.DoesNotExist:
-                credenciales = None
-        print(credenciales)
-        dato_enviado = {
-            'enviado': enviado,
-            'estatus_web': estatus_web,
-            'estatus_mail': estatus_mail,
-            'estatus_pc': estatus_pc,
-            'credenciales': credenciales,
+        datos_enviados = []
+        for enviado in enviados:
+            estatus_web = Estatus_Web.objects.filter(enviado=enviado)
+            estatus_mail = Estatus_Mail.objects.filter(enviado=enviado)
+            estatus_pc = Estatus_PC.objects.filter(enviado=enviado)
+            
+            credenciales = None
+            for web in estatus_web:
+                try:
+                    credenciales = Credenciales.objects.filter(estatus_web=web).first()
+                except Credenciales.DoesNotExist:
+                    credenciales = None
+            
+            dato_enviado = {
+                'enviado': enviado,
+                'estatus_web': estatus_web,
+                'estatus_mail': estatus_mail,
+                'estatus_pc': estatus_pc,
+                'credenciales': credenciales,
+            }
+
+            datos_enviados.append(dato_enviado)
+
+        correo_datos = { 
+            'correo' : correo,
+            'enviados' : datos_enviados,
+            'grupos' : nombre_grupos,
+            'grupo': grupo.nombre,
+            'grupo_id': grupo.id,
+            'plantillas': lista_plantillas,
         }
 
-        datos_enviados.append(dato_enviado)
-    datos = { 
-        'correos' : Correos.objects.filter(propietario__username=usuario, grupo__id=id),
-        'grupos' : nombre_grupos,
-        'grupo': grupo.nombre,
-        'grupo_id': grupo.id,
-        'enviados' : datos_enviados,
-        'plantillas': lista_plantillas,
-        'estatus_web': estatus_web,
-        'estatus_mail': estatus_mail,
-        'estatus_pc': estatus_pc,
-    }
-
+        datos.append(correo_datos)
     return datos
+
 
 
 

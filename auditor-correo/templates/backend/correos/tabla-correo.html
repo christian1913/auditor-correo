@@ -1,61 +1,64 @@
 {% load static %}
 
-{% for x in datos.enviados %}
-<table id="credenciales" style="margin-bottom: 20px;">
+{% for datos_correo in datos %}
+    <h2>Correo: {{ datos_correo.correo.correo }}</h2>
+    {% for x in datos_correo.enviados %}
+        <table id="credenciales" style="margin-bottom: 20px;">
 
-    <tr>
-        <th><h6>Fecha envio</h6></th>   
-        <th><h6>Plantilla</h6></th>
-        <th><h6>Fecha opertura mail</h6></th>
-        <th><h6>Ip</h6></th>
-        <th><h6>Pais</h6></th>
-        <th><h6>Idioma</h6></th>
-        <th><h6>Fecha Web</h6></th>
-        {% if x.enviado.plantilla.tipo == "phishing" %}
-            <th><h6>Usuario</h6></th>
-            <th><h6>Contraseña</h6></th>
-        {% endif %}
+            <tr>
+                <th><h6>Fecha envio</h6></th>   
+                <th><h6>Plantilla</h6></th>
+                <th><h6>Fecha opertura mail</h6></th>
+                <th><h6>Ip</h6></th>
+                <th><h6>Pais</h6></th>
+                <th><h6>Idioma</h6></th>
+                <th><h6>Fecha Web</h6></th>
+                {% if x.enviado.plantilla.tipo == "phishing" %}
+                    <th><h6>Usuario</h6></th>
+                    <th><h6>Contraseña</h6></th>
+                {% endif %}
+                {% if x.enviado.plantilla.tipo == "script" %}
+                    <th><h6>IP Dispositivo</h6></th>
+                    <th><h6>Pais</h6></th>
+                    <th><h6>Fecha ejecución</h6></th>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>{{ x.enviado.fecha_envio }}</td>
+                <td>{{ x.enviado.plantilla.nombre }}</td>
+
+                {% for estatus in x.estatus_mail %}
+                    <td>{{ estatus.fecha }}</td>
+                {% endfor %}
+
+
+                {% for estatus in x.estatus_web %}
+                    <td>{{ estatus.ip }}</td>
+                    <td>{{ estatus.pais }}</td>
+                    <td>{{ estatus.idioma }}</td>
+                    <td>{{ estatus.fecha }}</td>
+                    {% if x.enviado.plantilla.tipo == "phishing" %}
+                        <td>{{ x.credenciales.usuario }}</td>
+                        <td>{{ x.credenciales.contraseña }}</td>
+                    {% endif %}
+                {% endfor %}
+
+
+                {% if x.enviado.plantilla.tipo == "script" %}
+                    {% for estatus in x.estatus_pc %}
+                        <td>{{ estatus.ip }}</td>
+                        <td>{{ estatus.pais }}</td>
+                        <td>{{ estatus.fecha }}</td>
+                    {% endfor %}
+                {% endif %}
+            </tr>
+        </table>
+
         {% if x.enviado.plantilla.tipo == "script" %}
-            <th><h6>IP Dispositivo</h6></th>
-            <th><h6>Pais</h6></th>
-            <th><h6>Fecha ejecución</h6></th>
+        <div style="margin-bottom: 20px; text-align: center;">
+            <h2 style="margin-bottom: 10px;">Datos enviados por el Script</h2>
+            <p>{{ x.estatus_pc.data }}</p>
+        </div>
         {% endif %}
-    </tr>
-    <tr>
-        <td>{{ x.enviado.fecha_envio }}</td>
-        <td>{{ x.enviado.plantilla.nombre }}</td>
-
-        {% for estatus in x.estatus_mail %}
-            <td>{{ estatus.fecha }}</td>
-        {% endfor %}
-
-
-        {% for estatus in x.estatus_web %}
-            <td>{{ estatus.ip }}</td>
-            <td>{{ estatus.pais }}</td>
-            <td>{{ estatus.idioma }}</td>
-            <td>{{ estatus.fecha }}</td>
-            {% if x.enviado.plantilla.tipo == "phishing" %}
-                <td>{{ x.credenciales.usuario }}</td>
-                <td>{{ x.credenciales.contraseña }}</td>
-            {% endif %}
-        {% endfor %}
-
-
-        {% if x.enviado.plantilla.tipo == "script" %}
-            {% for estatus in x.estatus_pc %}
-                <td>{{ estatus.ip }}</td>
-                <td>{{ estatus.pais }}</td>
-                <td>{{ estatus.fecha }}</td>
-            {% endfor %}
-        {% endif %}
-    </tr>
-</table>
-
-{% if x.enviado.plantilla.tipo == "script" %}
-<div style="margin-bottom: 20px; text-align: center;">
-    <h2 style="margin-bottom: 10px;">Datos enviados por el Script</h2>
-    <p>{{ x.estatus_pc.data }}</p>
-</div>
-{% endif %}
+    {% endfor %}
 {% endfor %}
