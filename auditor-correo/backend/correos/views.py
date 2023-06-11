@@ -75,31 +75,39 @@ def index(request, id=None):
 @login_required(login_url='/accounts/login/')
 def obtener_datos_correos(request, id):
     usuario = User.get_username(request.user)
-    grupo = Grupos.objects.filter(id=id)[0]
+    grupo = Grupos.objects.filter(id=id).first()
     grupos = Grupos.objects.filter(propietario__username=usuario).exclude(id=id)
-    nombre_grupos = [{'id' : d.id, 'nombre' : d.nombre} for d in grupos ]
+    nombre_grupos = [{'id': d.id, 'nombre': d.nombre} for d in grupos]
     plantillas = Plantillas.objects.filter(propietario__username=usuario)
-    lista_plantillas = [{'id' : d.id, 'nombre' : d.nombre } for d in plantillas ]
+    lista_plantillas = [{'id': d.id, 'nombre': d.nombre} for d in plantillas]
 
     correos = Correos.objects.filter(propietario__username=usuario, grupo__id=id)
 
     datos = []
     for correo in correos:
         enviados = Enviados.objects.filter(propietario__username=usuario, correo=correo)
-        
-        datos_enviados = []
+
+        correo_datos = {
+            'correo': correo,
+            'enviados': [],
+            'grupos': nombre_grupos,
+            'grupo': grupo.nombre,
+            'grupo_id': grupo.id,
+            'plantillas': lista_plantillas,
+        }
+
         for enviado in enviados:
             estatus_web = Estatus_Web.objects.filter(enviado=enviado).first()
             estatus_mail = Estatus_Mail.objects.filter(enviado=enviado).first()
             estatus_pc = Estatus_PC.objects.filter(enviado=enviado).first()
-            
+
             credenciales = None
             if estatus_web:
                 try:
                     credenciales = Credenciales.objects.filter(estatus_web=estatus_web).first()
                 except Credenciales.DoesNotExist:
                     credenciales = None
-            
+
             dato_enviado = {
                 'enviado': enviado,
                 'estatus_web': estatus_web,
@@ -108,20 +116,13 @@ def obtener_datos_correos(request, id):
                 'credenciales': credenciales,
             }
 
-            datos_enviados.append(dato_enviado)
-
-        correo_datos = { 
-            'correo' : correo,
-            'enviados' : datos_enviados,
-            'grupos' : nombre_grupos,
-            'grupo': grupo.nombre,
-            'grupo_id': grupo.id,
-            'plantillas': lista_plantillas,
-        }
+            correo_datos['enviados'].append(dato_enviado)
 
         datos.append(correo_datos)
-        print(datos)
+
     return datos
+
+
 
 
 

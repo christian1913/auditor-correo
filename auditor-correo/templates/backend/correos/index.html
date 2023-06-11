@@ -1,18 +1,19 @@
 {% extends "backend/base.html" %}
 {% load static %}
+
 {% block content %}
 
 <div class="titleOptions">
-    <h1 class="sectionTitle uppercase">grupos | {{datos.grupo}}</h1>
+    <h1 class="sectionTitle uppercase">grupos | {{ datos.0.grupo }}</h1>
     <button class="addNewItem" onclick="toggleModal('añadir-correo')">Añadir correo</button>
 </div>
 
-{% for i in datos.correos %}
+{% for datos_correo in datos %}
     <div class="box">
         <div class="box-header">
             <div class="box-header-info">
                 <div><img class="mail-icon" src="{% static 'images/frontend/icons/mail.svg' %}"></div>
-                <div><h6 class="orange email-text">{{ i.correo }}</h6></div>
+                <div><h6 class="orange email-text">{{ datos_correo.correo.correo }}</h6></div>
                 <!--dropdown icons-->
                 <div id="drop-icon-{{ forloop.counter }}" class="drop-icon" onclick="dropIconPress('{{ forloop.counter }}')">
                     <div>
@@ -24,19 +25,19 @@
             </div>
             <div>
                 <!--button change group -->
-                {% if datos.grupos|length > 0 %}
-                <button onclick="showList('clientsList{{i.id}}')" class="button blue-btn buttonSelector">
+                {% if datos_correo.grupos|length > 0 %}
+                <button onclick="showList('clientsList{{datos_correo.correo.id}}')" class="button blue-btn buttonSelector">
                     Cambiar grupo
-                    <ul class="inactive filterList emailDepartmentList" id="clientsList{{i.id}}">
-                        {% for d in datos.grupos %}
-                            <form method="POST" action="{% url 'correos-receptores' id=i.grupo.id %}">
+                    <ul class="inactive filterList emailDepartmentList" id="clientsList{{datos_correo.correo.id}}">
+                        {% for d in datos_correo.grupos %}
+                            <form method="POST" action="{% url 'correos-receptores' id=datos_correo.grupo_id %}">
                                 {% csrf_token %}
-                                <input type="hidden" name="id-correo" value="{{i.id}}">
-                                <input type="hidden" name="id-grupo" value="{{d.id}}">
+                                <input type="hidden" name="id-correo" value="{{ datos_correo.correo.id }}">
+                                <input type="hidden" name="id-grupo" value="{{ d.id }}">
                                 <input type="hidden" name="instruccion" value="cambiar-correo">
                                 <li>
                                     <div class="itemList">
-                                        <input  type="submit" value="{{ d.nombre }}"/>
+                                        <input type="submit" value="{{ d.nombre }}"/>
                                     </div>
                                 </li>
                             </form>
@@ -45,79 +46,110 @@
                 </button>
                 {% endif %}
                 <!--button send-->
-                <button onclick="toggleModal('enviar{{i.id}}') "class="button blue-btn"><h6>Enviar correo</h6></button> 
+                <button onclick="toggleModal('enviar{{datos_correo.correo.id}}')" class="button blue-btn"><h6>Enviar correo</h6></button> 
                 <!--button delete-->
-                <button onclick="toggleModal('delete{{i.id}}') "class="button red-btn"><h6>Eliminar</h6></button>
+                <button onclick="toggleModal('delete{{datos_correo.correo.id}}')" class="button red-btn"><h6>Eliminar</h6></button>
             </div>
         </div>
         <div class="box-body box-body-left">
-            
-
             <div class="pc-box">
                 <div>
-                    
                     <!--popup button delete-->
-                    <div id="delete{{i.id}}" class="modal popupContentWrapper">
+                    <div id="delete{{datos_correo.correo.id}}" class="modal popupContentWrapper">
                         <div class="popup-content">
-                            <span onclick="toggleModal('delete{{i.id}}')" class="close">&times;</span>
-                            <form action="{% url 'correos' id=i.grupo.id %}" method="post" style="text-align: center;">
-                                <h5>Introduce "eliminar" para confirmar la eliminación del correo <span class="orange">{{ i.correo }}</span>:</h5>
+                            <span onclick="toggleModal('delete{{datos_correo.correo.id}}')" class="close">&times;</span>
+                            <form action="{% url 'correos' id=datos_correo.grupo_id %}" method="post" style="text-align: center;">
+                                <h5>Introduce "eliminar" para confirmar la eliminación del correo <span class="orange">{{ datos_correo.correo.correo }}</span>:</h5>
                                 <div>
                                     {% csrf_token %}
                                     <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-correo" type="hidden">
-                                    <input autocomplete="on" name="id" id="id" value="{{ i.id }}" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ datos_correo.correo.id }}" type="hidden">
                                     <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
                                     <input type="submit" class="submit" value="Eliminar">
-                                </div>
-                            
-                            </form>
-
-                        </div>
-                    </div>   
-                    
-                    <!--popup button send-->
-                    <div id="enviar{{i.id}}" class="modal popupContentWrapper">
-                        <div class="popup-content">
-                            <span onclick="toggleModal('enviar{{i.id}}')" class="close">&times;</span>
-                            <form action="{% url 'auditar' %}" method="post" style="text-align: center;">
-                                <h5>Introduce "enviar" para enviar un correo a <span class="orange">{{ i.correo }}</span>:</h5>
-                                <div>
-                                    {% csrf_token %}
-                                    <input autocomplete="on" name="instruccion" id="instruccion" value="enviar-correo" type="hidden">
-                                    <input autocomplete="on" name="id" id="id" value="{{ i.id }}" type="hidden">
-                                    <input type="text" name="enviar">
-                                    <select name="plantilla">
-                                        {% for plantillas in datos.plantillas %}
-                                            <option value="{{plantillas.id}}">{{plantillas.nombre}}</option>
-                                        {% endfor %}
-                                    </select>      
-                                    <input type="submit" class="submit" value="Enviar">
                                 </div>
                             </form>
                         </div>
                     </div>
                     
-                    
+                    <!--popup button send-->
+                    <div id="enviar{{datos_correo.correo.id}}" class="modal popupContentWrapper">
+                        <div class="popup-content">
+                            <span onclick="toggleModal('enviar{{datos_correo.correo.id}}')" class="close">&times;</span>
+                            <form action="{% url 'auditar' %}" method="post" style="text-align: center;">
+                                <h5>Introduce "enviar" para enviar un correo a <span class="orange">{{ datos_correo.correo.correo }}</span>:</h5>
+                                <div>
+                                    {% csrf_token %}
+                                    <input autocomplete="on" name="instruccion" id="instruccion" value="enviar-correo" type="hidden">
+                                    <input autocomplete="on" name="id" id="id" value="{{ datos_correo.correo.id }}" type="hidden">
+                                    <input type="text" name="enviar">
+                                    <select name="plantilla">
+                                        {% for plantilla in datos_correo.plantillas %}
+                                            <option value="{{ plantilla.id }}">{{ plantilla.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="submit" class="submit" value="Enviar">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="pc-options-box-{{ forloop.counter }}" class="pc-options-box">
-
+                <h1>hola</h1>
                 {% block tabla %}
-                {% include 'backend/correos/tabla-correo.html' %}
+                    <table id="credenciales" style="margin-bottom: 20px;">
+                        <tr>
+                            <th><h6>Fecha envío</h6></th>
+                            <th><h6>Plantilla</h6></th>
+                            <th><h6>Fecha apertura del correo</h6></th>
+                            <th><h6>IP</h6></th>
+                            <th><h6>País</h6></th>
+                            <th><h6>Idioma</h6></th>
+                            <th><h6>Fecha Web</h6></th>
+                            {% if datos_correo.correo.plantilla.tipo == "phishing" %}
+                                <th><h6>Usuario</h6></th>
+                                <th><h6>Contraseña</h6></th>
+                            {% endif %}
+                            {% if datos_correo.correo.plantilla.tipo == "script" %}
+                                <th><h6>IP Dispositivo</h6></th>
+                                <th><h6>País</h6></th>
+                                <th><h6>Fecha ejecución</h6></th>
+                            {% endif %}
+                        </tr>
+                        {% for enviado in datos_correo.enviados %}
+                            <tr>
+                                <td>{{ enviado.enviado.fecha_envio }}</td>
+                                <td>{{ enviado.enviado.plantilla.nombre }}</td>
+                                <td>{{ enviado.estatus_mail.fecha }}</td>
+                                <td>{{ enviado.estatus_web.ip }}</td>
+                                <td>{{ enviado.estatus_web.pais }}</td>
+                                <td>{{ enviado.estatus_web.idioma }}</td>
+                                <td>{{ enviado.estatus_web.fecha }}</td>
+                                {% if datos_correo.correo.plantilla.tipo == "phishing" %}
+                                    <td>{{ enviado.credenciales.usuario }}</td>
+                                    <td>{{ enviado.credenciales.contraseña }}</td>
+                                {% endif %}
+                                {% if datos_correo.correo.plantilla.tipo == "script" %}
+                                    <td>{{ enviado.estatus_pc.ip }}</td>
+                                    <td>{{ enviado.estatus_pc.pais }}</td>
+                                    <td>{{ enviado.estatus_pc.fecha }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
                 {% endblock %}
-
             </div>
         </div>
     </div>
     <div id="añadir-correo" class="modal popupContentWrapper">
         <div class="popup-content">
             <span onclick="toggleModal('añadir-correo')" class="close">&times;</span>
-            <form action="{% url 'correos' id=i.grupo.id %}" method="post" style="text-align: center;">
-                <h5>Escriba el nombre del correo que desea añadir al grupo:<span class="orange">{{datos.grupo}}</span>:</h5>
+            <form action="{% url 'correos' id=datos_correo.grupo_id %}" method="post" style="text-align: center;">
+                <h5>Escriba el nombre del correo que desea añadir al grupo:<span class="orange">{{ datos_correo.grupo }}</span>:</h5>
                 <div>
                     {% csrf_token %}
                     <input autocomplete="on" name="instruccion" id="instruccion" value="añadir-correo" type="hidden">
-                    <input type="hidden" name="grupo" value="{{datos.grupo_id}}">
+                    <input type="hidden" name="grupo" value="{{ datos_correo.grupo_id }}">
                     <input autocomplete="on" name="id" id="id" value="all" type="hidden">
                     <input type="text" name="correo">
                     <input type="submit" class="submit" value="Añadir">
@@ -125,8 +157,9 @@
             </form>
         </div>
     </div>
-    
 {% endfor %}
+
+
 
 
 <script>

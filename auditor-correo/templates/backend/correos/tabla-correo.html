@@ -1,54 +1,53 @@
 {% load static %}
 
+<h2>Correo:</h2>
 {% for datos_correo in datos %}
     <h2>Correo: {{ datos_correo.correo.correo }}</h2>
-    {% for x in datos_correo.enviados %}
+    {% for enviado in datos_correo.enviados %}
         <table id="credenciales" style="margin-bottom: 20px;">
-
             <tr>
-                <th><h6>Fecha envio</h6></th>   
+                <th><h6>Fecha envío</h6></th>
                 <th><h6>Plantilla</h6></th>
-                <th><h6>Fecha opertura mail</h6></th>
-                <th><h6>Ip</h6></th>
-                <th><h6>Pais</h6></th>
+                <th><h6>Fecha apertura del correo</h6></th>
+                <th><h6>IP</h6></th>
+                <th><h6>País</h6></th>
                 <th><h6>Idioma</h6></th>
                 <th><h6>Fecha Web</h6></th>
-                {% if x.enviado.plantilla.tipo == "phishing" %}
+                {% if enviado.enviado.plantilla.tipo == "phishing" %}
                     <th><h6>Usuario</h6></th>
                     <th><h6>Contraseña</h6></th>
                 {% endif %}
-                {% if x.enviado.plantilla.tipo == "script" %}
+                {% if enviado.enviado.plantilla.tipo == "script" %}
                     <th><h6>IP Dispositivo</h6></th>
-                    <th><h6>Pais</h6></th>
+                    <th><h6>País</h6></th>
                     <th><h6>Fecha ejecución</h6></th>
                 {% endif %}
             </tr>
             <tr>
-                <td>{{ x.enviado.fecha_envio }}</td>
-                <td>{{ x.enviado.plantilla.nombre }}</td>
-                <td>{{ x.estatus_mail.fecha }}</td>
-                <td>{{ x.estatus_web.ip }}</td>
-                <td>{{ x.estatus_web.pais }}</td>
-                <td>{{ x.estatus_web.idioma }}</td>
-                <td>{{ x.estatus_web.fecha }}</td>
-                {% if x.enviado.plantilla.tipo == "phishing" %}
-                    <td>{{ x.credenciales.usuario }}</td>
-                    <td>{{ x.credenciales.contraseña }}</td>
+                <td>{{ enviado.enviado.fecha_envio }}</td>
+                <td>{{ enviado.enviado.plantilla.nombre }}</td>
+                <td>{{ enviado.estatus_mail.fecha }}</td>
+                <td>{{ enviado.estatus_web.ip }}</td>
+                <td>{{ enviado.estatus_web.pais }}</td>
+                <td>{{ enviado.estatus_web.idioma }}</td>
+                <td>{{ enviado.estatus_web.fecha }}</td>
+                {% if enviado.enviado.plantilla.tipo == "phishing" %}
+                    <td>{{ enviado.credenciales.usuario }}</td>
+                    <td>{{ enviado.credenciales.contraseña }}</td>
                 {% endif %}
-                {% if x.enviado.plantilla.tipo == "script" %}
-                    <td>{{ x.estatus_pc.ip }}</td>
-                    <td>{{ x.estatus_pc.pais }}</td>
-                    <td>{{ x.estatus_pc.fecha }}</td>
+                {% if enviado.enviado.plantilla.tipo == "script" %}
+                    <td>{{ enviado.estatus_pc.ip }}</td>
+                    <td>{{ enviado.estatus_pc.pais }}</td>
+                    <td>{{ enviado.estatus_pc.fecha }}</td>
                 {% endif %}
             </tr>
         </table>
 
-        {% if x.enviado.plantilla.tipo == "script" %}
-        <div style="margin-bottom: 20px; text-align: center;">
-            <h2 style="margin-bottom: 10px;">Datos enviados por el Script</h2>
-            <p>{{ x.estatus_pc.data }}</p>
-        </div>
+        {% if enviado.enviado.plantilla.tipo == "script" %}
+            <div style="margin-bottom: 20px; text-align: center;">
+                <h2 style="margin-bottom: 10px;">Datos enviados por el Script</h2>
+                <p>{{ enviado.estatus_pc.data }}</p>
+            </div>
         {% endif %}
     {% endfor %}
 {% endfor %}
-
