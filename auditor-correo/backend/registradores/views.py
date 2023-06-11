@@ -94,7 +94,7 @@ def web_estatus(request, int=None):
     elif request.method == 'GET':
         try:
             plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
-            html = plantilla.html
+            html = plantilla.plantilla
 
             return HttpResponse(Template(html).render(Context()))
         except Plantillas.DoesNotExist:
