@@ -21,6 +21,7 @@ def validar_ip(ip):
         return False
 
 def mail_status(request, int=None):
+    print("MAIL ESTATUS")
     try:
         enviado = Enviados.objects.get(id=int)
         data = registrar(request)
