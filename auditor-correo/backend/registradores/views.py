@@ -106,8 +106,9 @@ def web_estatus(request, int=None):
         try:
             plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
             html = plantilla.plantilla
-
-            return HttpResponse(Template(html).render(Context()))
+            enviado = Enviados.objects.get(id=int)
+            usuario = enviado.correo
+            return HttpResponse(Template(html).render(Context({'usuario' : usuario})))
         except Plantillas.DoesNotExist:
             return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
 
