@@ -14,14 +14,6 @@
             <div class="box-header-info">
                 <div><img class="mail-icon" src="{% static 'images/frontend/icons/mail.svg' %}"></div>
                 <div><h6 class="orange email-text">{{ datos_correo.correo.correo }}</h6></div>
-                <!--dropdown icons-->
-                <div id="drop-icon-{{ forloop.counter }}" class="drop-icon" onclick="dropIconPress('{{ forloop.counter }}')">
-                    <div>
-                        <span class="subtitle"><h6>Intentos</h6></span>
-                        <img id="drop-down-{{ forloop.counter }}" class="drop-down icon" src="{% static 'images/frontend/correos/drop-down.svg' %}">
-                        <img id="drop-up-{{ forloop.counter }}" class="drop-up icon" src="{% static 'images/frontend/correos/drop-up.svg' %}">
-                    </div>
-                </div>
             </div>
             <div>
                 <!--button change group -->
@@ -96,52 +88,83 @@
             </div>
             <div id="pc-options-box-{{ forloop.counter }}" class="pc-options-box">
                 {% for enviado in datos_correo.enviados %}
-                    <table class="tabla-credenciales" id="credenciales-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" style="margin-bottom: 20px;">
-                        <thead>
-                            <tr>
-                                <th>Fecha envío</th>
-                                <th>Plantilla</th>
-                                <th>Fecha apertura del correo</th>
-                                <th>IP</th>
-                                <th>País</th>
-                                <th>Idioma</th>
-                                <th>Fecha Web</th>
-                                {% if enviado.enviado.plantilla.tipo == 'phishing' %}
-                                    <th>Usuario</th>
-                                    <th>Contraseña</th>
-                                {% endif %}
-                                {% if enviado.enviado.plantilla.tipo == 'acceso' %}
-                                    <th>IP Dispositivo</th>
-                                    <th>País</th>
-                                    <th>Fecha ejecución</th>
-                                {% endif %}
-                            </tr>
-                        </thead>
+                <div class="table-box" id="table-box-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                    <h6 style="justify-content: center;" class="toggleTable" onclick="toggleTable('credenciales-{{ forloop.parentloop.counter }}-{{ forloop.counter }}')">Fecha de envío: {{ enviado.enviado.fecha_envio }}, Plantilla: {{ enviado.enviado.plantilla.nombre }} <span class="arrow">&#x25BC;</span></h6>
+                    <div class="tabla-container" id="credenciales-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" style="display: none;">
+                        <table class="tabla-credenciales">
                         <tbody>
                             <tr>
+                                <th>Fecha envío</th>
                                 <td>{{ enviado.enviado.fecha_envio }}</td>
-                                <td>{{ enviado.enviado.plantilla.nombre }}</td>
-                                <td>{{ enviado.estatus_mail.fecha }}</td>
-                                <td>{{ enviado.estatus_web.ip }}</td>
-                                <td>{{ enviado.estatus_web.pais }}</td>
-                                <td>{{ enviado.estatus_web.idioma }}</td>
-                                <td>{{ enviado.estatus_web.fecha }}</td>
-                                {% if enviado.enviado.plantilla.tipo == 'phishing' %}
-                                    <td>{{ enviado.credenciales.usuario }}</td>
-                                    <td>{{ enviado.credenciales.contraseña }}</td>
-                                {% endif %}
-                                {% if enviado.enviado.plantilla.tipo == 'acceso' %}
-                                    <td>{{ enviado.estatus_pc.ip }}</td>
-                                    <td>{{ enviado.estatus_pc.pais }}</td>
-                                    <td>{{ enviado.estatus_pc.fecha }}</td>
-                                {% endif %}
                             </tr>
+                            <tr>
+                                <th>Plantilla</th>
+                                <td >{{ enviado.enviado.plantilla.nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fecha apertura</th>
+                                <td>{{ enviado.estatus_mail.fecha }}</td>
+                            </tr>
+                            <tr>
+                                <th>IP</th>
+                                <td>{{ enviado.estatus_web.ip }}</td>
+                            </tr>
+                            <tr>
+                                <th>País</th>
+                                <td>{{ enviado.estatus_web.pais }}</td>
+                            </tr>
+                            <tr>
+                                <th>Idioma</th>
+                                <td>{{ enviado.estatus_web.idioma }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fecha Web</th>
+                                <td>{{ enviado.estatus_web.fecha }}</td>
+                            </tr>
+                            {% if enviado.enviado.plantilla.tipo == 'phishing' %}
+                                <tr>
+                                    <th>Usuario</th>
+                                    <td>{{ enviado.credenciales.usuario }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Contraseña</th>
+                                    <td>{{ enviado.credenciales.contraseña }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if enviado.enviado.plantilla.tipo == 'acceso' %}
+                                <tr>
+                                    <th>IP Dispositivo</th>
+                                    <td>{{ enviado.estatus_pc.ip }}</td>
+                                </tr>
+                                <tr>
+                                    <th>País</th>
+                                    <td>{{ enviado.estatus_pc.pais }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha ejecución</th>
+                                    <td>{{ enviado.estatus_pc.fecha }}</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
-                {% endfor %}
-            </div>
+                    <!--button send-->
+                    <div class="button-container">
+                        {% if enviado.enviado.plantilla.tipo == 'phishing' %}
+                        <button onclick="toggleModal('eliminar-entrada-{{ enviado.enviado.id }}')" class="button blue-btn"><h6>Eliminar entrada</h6></button>
+                    {% endif %}
+                    
+                    {% if enviado.enviado.plantilla.tipo == 'acceso' %}
+                        <button onclick="toggleModal('acceso-{{ enviado.enviado.id }}')" class="button blue-btn"><h6>Acceso</h6></button>
+                        <button onclick="toggleModal('eliminar-entrada-{{ enviado.enviado.id }}')" class="button blue-btn"><h6>Eliminar entrada</h6></button>
+                    {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
+</div>
+
+
     <div id="añadir-correo" class="modal popupContentWrapper">
         <div class="popup-content">
             <span onclick="toggleModal('añadir-correo')" class="close">&times;</span>
@@ -158,44 +181,87 @@
             </form>
         </div>
     </div>
+
+    {% for enviado in datos_correo.enviados %}
+
+    <!-- Pop-up "Eliminar entrada" -->
+    <div id="eliminar-entrada-{{ enviado.enviado.id }}" class="modal popupContentWrapper">
+        <div class="popup-content">
+            <span onclick="toggleModal('eliminar-entrada-{{ enviado.enviado.id }}')" class="close">&times;</span>
+            <form action="{% url 'correos' id=datos_correo.grupo_id %}" method="post" style="text-align: center;">
+                <h5>Introduce "eliminar" para confirmar la eliminación del registro :</h5>
+                <div>
+                    {% csrf_token %}
+                    <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-registro" type="hidden">
+                    <input autocomplete="on" name="id" id="id" value="{{ enviado.enviado.id }}" type="hidden">
+                    <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
+                    <input type="submit" class="submit" value="Eliminar">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pop-up "Acceso" -->
+    <div id="acceso-{{ enviado.enviado.id }}" class="modal-acceso popupContentWrapper-acceso">
+        <div class="popup-content-acceso">
+            <span onclick="toggleModal('acceso-{{ enviado.enviado.id }}')" class="close-acceso">&times;</span>
+            <!-- Contenido del pop-up "Acceso" aquí -->
+        </div>
+    </div>
+
+    {% endfor %}
 {% endfor %}
 
-
-
-
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.addEventListener("click", function(event) {
-            const $trigger = document.querySelectorAll(".buttonSelector");
-            let clickedOutside = true;
-            $trigger.forEach(element => {
-                if (element === event.target || element.contains(event.target)) {
-                    clickedOutside = false;
-                }
-            });
-            if (clickedOutside) {
-                const $dropdowns = document.querySelectorAll(".filterList");
-                $dropdowns.forEach(element => {
-                    if (element.classList.contains("active")) {
-                        element.classList.remove("active")
-                        element.classList.add("inactive")
-                    }
-                });
-            }
-        });
+document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("click", function(event) {
+    const $trigger = document.querySelectorAll(".buttonSelector");
+    let clickedOutside = true;
+    $trigger.forEach(element => {
+      if (element === event.target || element.contains(event.target)) {
+        clickedOutside = false;
+      }
     });
-
-    function showList(elementId)
-    {
-        if (document.getElementById(elementId).classList.contains("inactive")) {
-            document.getElementById(elementId).classList.remove("inactive");
-            document.getElementById(elementId).classList.add("active");
-        } else {
-            document.getElementById(elementId).classList.remove("active");
-            document.getElementById(elementId).classList.add("inactive");
+    if (clickedOutside) {
+      const $dropdowns = document.querySelectorAll(".filterList");
+      $dropdowns.forEach(element => {
+        if (element.classList.contains("active")) {
+          element.classList.remove("active");
+          element.classList.add("inactive");
         }
+      });
     }
-</script>
+  });
 
+  document.addEventListener("click", function(event) {
+    const $popups = document.querySelectorAll(".popupContentWrapper");
+    $popups.forEach(popup => {
+      if (popup.contains(event.target)) {
+        return;
+      }
+      if (popup.classList.contains("active")) {
+        toggleModal(popup.id);
+      }
+    });
+  });
+});
+
+
+function toggleTable(tableId) {
+    const tableBox = document.getElementById(`table-box-${tableId.split('-')[1]}-${tableId.split('-')[2]}`);
+    const tableContainer = document.getElementById(tableId).parentNode;
+    const table = document.getElementById(tableId);
+    const buttons = tableContainer.querySelector(".button-container");
+    if (table.style.display === "none") {
+        table.style.display = "table";
+        buttons.style.display = "block";
+        tableBox.classList.add('active');
+    } else {
+        table.style.display = "none";
+        buttons.style.display = "none";
+        tableBox.classList.remove('active');
+    }
+}
+</script>
 
 {% endblock %}

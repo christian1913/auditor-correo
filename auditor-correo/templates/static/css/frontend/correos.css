@@ -8,181 +8,239 @@
     font-weight: 200;
     height: calc(100vh - 81px);
     overflow-y: auto;
-  }
-  
-  .box {
+}
+
+.box {
     width: 95%;
     background: var(--color-white);
     margin-top: 15px;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .box-auto {
+}
+
+.box-auto {
     padding: 0px 20px;
     width: fit-content;
-  }
-  
-  .box-header {
+}
+
+.box-header {
     padding: 15px 15px 0;
     display: flex;
     justify-content: space-between;
-  }
-  
-  .box-header-info {
+}
+
+.box-header-info {
     display: flex;
     align-items: center;
-  }
-  
-  .email-text {
+}
+
+.email-text {
     margin-right: 20px;
-  }
-  
-  .box-body {
+}
+
+.box-body {
     padding: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-  }
-  
-  .box-body-left {
+}
+
+.box-body-left {
     justify-content: flex-start;
-  }
-  
-  .pc-box {
+}
+
+.pc-box {
     width: 100%;
     font-size: 13px;
-  }
-  
-  .pc-box > a {
+}
+
+.pc-box > a {
     color: #1d8cf8;
     text-decoration: none;
-  }
-  
-  .pc-box > div,
-  .pc-box > a > div {
+}
+
+.pc-box > div,
+.pc-box > a > div {
     display: flex;
     align-items: center;
-  }
-  
-  .pc-box > div {
+}
+
+.pc-box > div {
     justify-content: flex-end;
     width: 100%;
-  }
-  
-  .pc-box svg {
+}
+
+.pc-box svg {
     margin-right: 10px;
-  }
-  
-  .pc-options-box {
-    display: none;
+}
+
+.pc-options-box {
+    display: block;
     width: 100%;
     margin-top: 10px;
-  }
-  
-  .pc-active {
+}
+
+.pc-active {
     color: #ffffff !important;
-  }
-  
-  .icon {
+}
+
+.icon {
     vertical-align: bottom;
     margin-left: 3px;
     filter: invert(72%) sepia(1%) saturate(1658%) hue-rotate(204deg) brightness(84%) contrast(70%);
-  }
-  
-  .drop-icon:hover .icon {
+}
+
+.drop-icon:hover .icon {
     filter: invert(10%) sepia(5%) saturate(377%) hue-rotate(316deg) brightness(100%) contrast(78%);
-  }
-  
-  .drop-icon {
+}
+
+.drop-icon {
     cursor: pointer;
     display: flex;
     justify-content: flex-end;
     width: 100%;
     color: white !important;
-  }
-  
-  .drop-icon .subtitle h6 {
+}
+
+.drop-icon .subtitle h6 {
     color: var(--color-grey);
-  }
-  
-  .drop-icon:hover .subtitle h6 {
+}
+
+.drop-icon:hover .subtitle h6 {
     color: var(--color-black) !important;
-  }
-  
-  .drop-icon > div {
+}
+
+.drop-icon > div {
     display: flex;
-  }
-  
-  .drop-up {
+}
+
+.drop-up {
     display: none;
-  }
-  
-  .button {
+}
+
+.button {
     margin-right: 5px;
     border: 0;
     padding: 11px 40px;
     color: white;
     cursor: pointer;
-  }
-  
-  .button h6 {
+}
+
+.button h6 {
     color: var(--color-white);
-  }
-  
-  .blue-btn {
+}
+
+.blue-btn {
     background-color: var(--color-grey);
-  }
-  
-  .blue-btn:hover {
+}
+
+.blue-btn:hover {
     background-color: #a7a7aa;
-  }
-  
-  .red-btn {
+}
+
+.red-btn {
     background-color: var(--color-red);
-  }
-  
-  .red-btn:hover {
+}
+
+.red-btn:hover {
     background-color: #fa6f68;
-  }
-  
-  .mail-icon {
+}
+
+.mail-icon {
     filter: invert(35%) sepia(40%) saturate(6440%) hue-rotate(352deg) brightness(95%) contrast(90%);
     margin-right: 10px;
     margin-bottom: -3.5px;
-  }
-  
-  /* Table */
-  
-  .tabla-container {
-    background-color: #f8f8f8;
+}
+
+/* Table */
+
+.tabla-container {
+    display: none;
+    background-color: #eeeeee;
     border-radius: 5px;
     padding: 10px;
-  }
-  
-  .tabla-credenciales {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    margin-top: 10px;
+    width: calc(100% - 40px);
+}
+
+.tabla-container.active {
+    display: block;
+}
+
+.tabla-credenciales {
     width: 100%;
     border-collapse: collapse;
-    background-color: #f2f2f2;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-  }
-  
-  .tabla-credenciales th {
+    flex-direction: column;
+}
+
+.tabla-credenciales th {
     background-color: #424242;
     padding: 10px;
     color: #f2f2f2;
-  }
-  
-  .tabla-credenciales td,
-  .tabla-credenciales th {
+}
+
+.tabla-credenciales td,
+.tabla-credenciales th {
     border: 1px solid #ccc;
     padding: 8px;
-  }
-  
-  .tabla-credenciales tr:nth-child(even) {
+}
+
+.tabla-credenciales tr:nth-child(even) {
     background-color: #e8e8e8;
-  }
-  
+}
+
+/* Styles for h6 */
+.toggleTable {
+    width: calc(100% - 40px);
+    background-color: gray;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Gray div Styles */
+
+.tabla-container {
+    display: none;
+    background-color: #eeeeee;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.tabla-container.active {
+    display: block;
+}
+
+/* Button Styles */
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.button-container .button {
+    margin-left: 5px;
+}
+
+.responsive-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.responsive-button .button {
+    margin-left: 5px;
+}

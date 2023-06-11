@@ -20,11 +20,12 @@ def index(request, id=None):
         # Eliminar correo
         if request.POST['instruccion'] == 'eliminar-correo':
             eliminar_correo(request)
-        # Cambiar correo de grupo
         elif request.POST['instruccion'] == 'cambiar-correo':
             cambiar_correo_grupo(request)
         elif request.POST['instruccion'] == 'añadir-correo':
             añadir_correo(request)
+        elif request.POST['instruccion'] == 'eliminar-registro':
+            eliminar_registro(request)
         else:
             print('ninguna selección es correcta')
             messages.add_message(request, messages.ERROR, 'Error en la petición')
@@ -155,4 +156,27 @@ def añadir_correo(request):
         departameto = Grupos.objects.get(id=request.POST['grupo'], propietario=usuario)
         Correos.objects.create(correo=request.POST['correo'], grupo=departameto, propietario=usuario)
         messages.add_message(request, messages.SUCCESS, 'Correo añadido correctamente')
+    return 
+
+
+
+@login_required(login_url='/accounts/login/')
+def eliminar_registro(request):
+    
+    if request.POST['eliminar'] == 'eliminar':
+
+        try:
+
+            enviado = Enviados.objects.filter(id=request.POST['id'])
+            enviado.delete()
+            messages.add_message(request, messages.SUCCESS, 'Registro eliminado correctamente')
+        
+        except:
+
+            messages.add_message(request, messages.ERROR, 'No se ha encontrado el registro')
+    
+    else:
+
+        messages.add_message(request, messages.ERROR, 'No se ha podido eliminar el registro')
+
     return 

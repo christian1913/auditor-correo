@@ -86,7 +86,6 @@
     background-color: #E7431F;
   }
 </style>
-
 <form action="{% url 'editar-plantilla' id=plantilla.id %}" method="post" enctype="multipart/form-data">
   <h5 class="popupTitle">Añadir nueva plantilla</h5>
   {% csrf_token %}
@@ -121,6 +120,14 @@
     {% endif %}
     <input type="file" class="form-control" name="imagen" id="imagen">
   </div>
+
+  <div class="form-group" id="pdfGroup">
+    <label for="pdf">PDF:</label>
+    {% if plantilla.pdf %}
+      <a href="{{ plantilla.pdf.url }}" target="_blank">View PDF</a>
+    {% endif %}
+    <input type="file" class="form-control" name="pdf" id="pdf">
+  </div>
   
   <div class="form-group">
     <label for="plantilla">Plantilla:</label>
@@ -145,20 +152,29 @@
 </form>
 
 <script>
-  // Cuando el documento esté listo
   document.addEventListener('DOMContentLoaded', function() {
     var tipoElement = document.getElementById('tipo');
     var redireccionGroup = document.getElementById('redireccionGroup');
+    var pdfGroup = document.getElementById('pdfGroup');
+
+    function showRedireccion() {
+      redireccionGroup.style.display = '';
+      pdfGroup.style.display = 'none';
+    }
+
+    function showPDF() {
+      redireccionGroup.style.display = 'none';
+      pdfGroup.style.display = '';
+    }
 
     tipoElement.addEventListener('change', function() {
       if (tipoElement.value === 'phishing') {
-        redireccionGroup.style.display = '';
+        showRedireccion();
       } else if (tipoElement.value === 'acceso') {
-        redireccionGroup.style.display = 'none';
+        showPDF();
       }
     });
 
-    // Disparar el evento 'change' una vez al cargar la página para establecer el estado inicial correcto
     tipoElement.dispatchEvent(new Event('change'));
   });
 </script>

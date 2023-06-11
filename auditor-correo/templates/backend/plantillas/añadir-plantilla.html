@@ -127,6 +127,16 @@
     <input type="text" class="form-control" required="true" autocomplete="off" name="redireccion" id="redireccion" value="{{ plantilla.redireccion }}">
   </div>
 
+  <div class="form-group" id="pdfGroup">
+    <label for="pdf">PDF:</label>
+    <input type="file" class="form-control" name="pdf" id="pdf">
+  </div>
+
+  <div class="form-group">
+    <label for="plantilla">Plantilla:</label>
+    <textarea class="form-control" required="true" autocomplete="off" name="plantilla" id="plantilla">{{ plantilla.plantilla }}</textarea>
+  </div>
+  
   <div class="form-group">
     <label for="emisor">Emisor:</label>
     <select class="form-control" required="true" name="emisor" id="emisor">
@@ -140,21 +150,38 @@
 </form>
 
 <script>
-  // Cuando el documento esté listo
   document.addEventListener('DOMContentLoaded', function() {
     var tipoElement = document.getElementById('tipo');
     var redireccionGroup = document.getElementById('redireccionGroup');
+    var pdfGroup = document.getElementById('pdfGroup');
+
+    function showRedireccion() {
+      redireccionGroup.style.display = '';
+      pdfGroup.style.display = 'none';
+    }
+
+    function showPDF() {
+      redireccionGroup.style.display = 'none';
+      pdfGroup.style.display = '';
+    }
+
+    function hidePDF() {
+      pdfGroup.style.display = 'none';
+    }
 
     tipoElement.addEventListener('change', function() {
       if (tipoElement.value === 'phishing') {
-        redireccionGroup.style.display = '';
+        showRedireccion();
       } else if (tipoElement.value === 'acceso') {
-        redireccionGroup.style.display = 'none';
+        showPDF();
       }
     });
 
-    // Disparar el evento 'change' una vez al cargar la página para establecer el estado inicial correcto
     tipoElement.dispatchEvent(new Event('change'));
+
+    if (tipoElement.value === 'phishing') {
+      hidePDF();
+    }
   });
 </script>
 
