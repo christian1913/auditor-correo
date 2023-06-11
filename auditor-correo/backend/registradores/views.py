@@ -77,7 +77,7 @@ def web_estatus(request, int=None):
         if request.POST.get('descarga'):
             try:
                 plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
-                archivo = plantilla.archivo
+                archivo = plantilla.pdf
                 file_path = archivo.path
                 return FileResponse(open(file_path, 'rb'))
             except Plantillas.DoesNotExist:
