@@ -66,7 +66,7 @@ def index(request, id=None):
             'datos' : datos,
 
         }
-
+    print(datos)
     return render(request, 'backend/correos/index.html', data)
 
 
@@ -89,14 +89,14 @@ def obtener_datos_correos(request, id):
         
         datos_enviados = []
         for enviado in enviados:
-            estatus_web = Estatus_Web.objects.filter(enviado=enviado)
-            estatus_mail = Estatus_Mail.objects.filter(enviado=enviado)
-            estatus_pc = Estatus_PC.objects.filter(enviado=enviado)
+            estatus_web = Estatus_Web.objects.filter(enviado=enviado).first()
+            estatus_mail = Estatus_Mail.objects.filter(enviado=enviado).first()
+            estatus_pc = Estatus_PC.objects.filter(enviado=enviado).first()
             
             credenciales = None
-            for web in estatus_web:
+            if estatus_web:
                 try:
-                    credenciales = Credenciales.objects.filter(estatus_web=web).first()
+                    credenciales = Credenciales.objects.filter(estatus_web=estatus_web).first()
                 except Credenciales.DoesNotExist:
                     credenciales = None
             
@@ -122,6 +122,7 @@ def obtener_datos_correos(request, id):
         datos.append(correo_datos)
         print(datos)
     return datos
+
 
 
 
