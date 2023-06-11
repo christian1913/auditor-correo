@@ -10,7 +10,7 @@ from backend.plantillas.models import Plantillas
 from backend.smtp.models import Enviados
 import mimetypes
 import ipaddress
-
+import os
 
 
 def validar_ip(ip):
@@ -79,7 +79,15 @@ def web_estatus(request, int=None):
                 plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
                 archivo = plantilla.pdf
                 file_path = archivo.path
-                return FileResponse(open(file_path, 'rb'))
+
+                response = HttpResponse(content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename="your_filename.pdf"'
+                response['Content-Length'] = os.path.getsize(file_path)
+
+                with open(file_path, 'rb') as f:
+                    response.write(f.read())
+
+                return response
             except Plantillas.DoesNotExist:
                 return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
 
@@ -99,6 +107,7 @@ def web_estatus(request, int=None):
             return HttpResponse(Template(html).render(Context()))
         except Plantillas.DoesNotExist:
             return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
+
 
 @csrf_exempt
 def pc_estatus(request, int=None):
