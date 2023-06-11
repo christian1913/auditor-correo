@@ -35,7 +35,9 @@ def mail_status(request, int=None):
             idioma=data["idioma"],
             fecha=data["fecha"]
         )
+        print("agregado")
     except Enviados.DoesNotExist:
+        print("noagregado")
         return JsonResponse({'Error': 'No se encontró el objeto Enviados con id={}'.format(int)}, safe=False)
 
     try:

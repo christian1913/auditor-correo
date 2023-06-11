@@ -20,7 +20,7 @@ class Plantillas(models.Model):
     imagen = models.ImageField(upload_to='imagenes')
     plantilla = models.TextField()
     redireccion = models.CharField(max_length=200, null=True, blank=True)
-    pdf = models.FileField(upload_to='images', null=True, blank=True)
+    pdf = models.FileField(upload_to='imagenes', null=True, blank=True)
     emisor = models.ForeignKey(Emisores, on_delete=models.CASCADE)
     propietario = models.ForeignKey(User, null=True, on_delete=models.CASCADE)  
 
