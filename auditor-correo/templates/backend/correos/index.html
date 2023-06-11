@@ -30,7 +30,7 @@
                     Cambiar grupo
                     <ul class="inactive filterList emailDepartmentList" id="clientsList{{datos_correo.correo.id}}">
                         {% for d in datos_correo.grupos %}
-                            <form method="POST" action="{% url 'correos-receptores' id=datos_correo.grupo_id %}">
+                            <form method="POST" action="{% url 'correos-receptores' id=d.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="id-correo" value="{{ datos_correo.correo.id }}">
                                 <input type="hidden" name="id-grupo" value="{{ d.id }}">
@@ -95,27 +95,29 @@
                 </div>
             </div>
             <div id="pc-options-box-{{ forloop.counter }}" class="pc-options-box">
-                {% block tabla %}
-                    <table id="credenciales" style="margin-bottom: 20px;">
-                        <tr>
-                            <th><h6>Fecha envío</h6></th>
-                            <th><h6>Plantilla</h6></th>
-                            <th><h6>Fecha apertura del correo</h6></th>
-                            <th><h6>IP</h6></th>
-                            <th><h6>País</h6></th>
-                            <th><h6>Idioma</h6></th>
-                            <th><h6>Fecha Web</h6></th>
-                            {% if datos_correo.correo.plantilla.tipo == "phishing" %}
-                                <th><h6>Usuario</h6></th>
-                                <th><h6>Contraseña</h6></th>
-                            {% endif %}
-                            {% if datos_correo.correo.plantilla.tipo == "script" %}
-                                <th><h6>IP Dispositivo</h6></th>
-                                <th><h6>País</h6></th>
-                                <th><h6>Fecha ejecución</h6></th>
-                            {% endif %}
-                        </tr>
-                        {% for enviado in datos_correo.enviados %}
+                {% for enviado in datos_correo.enviados %}
+                    <table class="tabla-credenciales" id="credenciales-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" style="margin-bottom: 20px;">
+                        <thead>
+                            <tr>
+                                <th>Fecha envío</th>
+                                <th>Plantilla</th>
+                                <th>Fecha apertura del correo</th>
+                                <th>IP</th>
+                                <th>País</th>
+                                <th>Idioma</th>
+                                <th>Fecha Web</th>
+                                {% if enviado.enviado.plantilla.tipo == 'phishing' %}
+                                    <th>Usuario</th>
+                                    <th>Contraseña</th>
+                                {% endif %}
+                                {% if enviado.enviado.plantilla.tipo == 'acceso' %}
+                                    <th>IP Dispositivo</th>
+                                    <th>País</th>
+                                    <th>Fecha ejecución</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
                             <tr>
                                 <td>{{ enviado.enviado.fecha_envio }}</td>
                                 <td>{{ enviado.enviado.plantilla.nombre }}</td>
@@ -124,19 +126,19 @@
                                 <td>{{ enviado.estatus_web.pais }}</td>
                                 <td>{{ enviado.estatus_web.idioma }}</td>
                                 <td>{{ enviado.estatus_web.fecha }}</td>
-                                {% if datos_correo.correo.plantilla.tipo == "phishing" %}
+                                {% if enviado.enviado.plantilla.tipo == 'phishing' %}
                                     <td>{{ enviado.credenciales.usuario }}</td>
                                     <td>{{ enviado.credenciales.contraseña }}</td>
                                 {% endif %}
-                                {% if datos_correo.correo.plantilla.tipo == "script" %}
+                                {% if enviado.enviado.plantilla.tipo == 'acceso' %}
                                     <td>{{ enviado.estatus_pc.ip }}</td>
                                     <td>{{ enviado.estatus_pc.pais }}</td>
                                     <td>{{ enviado.estatus_pc.fecha }}</td>
                                 {% endif %}
                             </tr>
-                        {% endfor %}
+                        </tbody>
                     </table>
-                {% endblock %}
+                {% endfor %}
             </div>
         </div>
     </div>

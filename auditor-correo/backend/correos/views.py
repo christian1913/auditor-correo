@@ -9,83 +9,59 @@ from backend.plantillas.models import Plantillas
 from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
 
 
-@login_required(login_url='/accounts/login/') 
+@login_required(login_url='/accounts/login/')
 def index(request, id=None):
-
-
     if request.method == 'GET':
-        
         datos = obtener_datos_correos(request, id)
-
         data = {
-        
-            'datos' : datos,
+            'datos': datos,
         }
-
-
     elif request.method == 'POST':
-
         # Eliminar correo
-
         if request.POST['instruccion'] == 'eliminar-correo':
-
             eliminar_correo(request)
-
         # Cambiar correo de grupo
-
-        if request.POST['instruccion'] == 'cambiar-correo':
-
+        elif request.POST['instruccion'] == 'cambiar-correo':
             cambiar_correo_grupo(request)
-
-        if request.POST['instruccion'] == 'añadir-correo':
-
+        elif request.POST['instruccion'] == 'añadir-correo':
             añadir_correo(request)
-
         else:
-            
-            print('ninguna seleccion es correcta')
-            messages.add_message(request, messages.ERROR, 'Error en la peticion"')
-
-
-        datos = obtener_datos_correos(request, id)
-
-        data = {
+            print('ninguna selección es correcta')
+            messages.add_message(request, messages.ERROR, 'Error en la petición')
         
-            'datos' : datos,
-
+        datos = obtener_datos_correos(request, id)
+        data = {
+            'datos': datos,
         }
-
     else:
-
         print('NO ES UN GET NI UN POST')
         datos = obtener_datos_correos(request, id)
-        messages.add_message(request, messages.ERROR, 'Error en la peticion')
-
+        messages.add_message(request, messages.ERROR, 'Error en la petición')
         data = {
-        
-            'datos' : datos,
-
+            'datos': datos,
         }
+    
     print(datos)
     return render(request, 'backend/correos/index.html', data)
+
 
 
 # Funcion obtener datos correos
 
 @login_required(login_url='/accounts/login/')
 def obtener_datos_correos(request, id):
-    usuario = User.get_username(request.user)
+    usuario = request.user
     grupo = Grupos.objects.filter(id=id).first()
-    grupos = Grupos.objects.filter(propietario__username=usuario).exclude(id=id)
+    grupos = Grupos.objects.filter(propietario=usuario).exclude(id=id)
     nombre_grupos = [{'id': d.id, 'nombre': d.nombre} for d in grupos]
-    plantillas = Plantillas.objects.filter(propietario__username=usuario)
+    plantillas = Plantillas.objects.filter(propietario=usuario)
     lista_plantillas = [{'id': d.id, 'nombre': d.nombre} for d in plantillas]
 
-    correos = Correos.objects.filter(propietario__username=usuario, grupo__id=id)
+    correos = Correos.objects.filter(propietario=usuario, grupo__id=id)
 
     datos = []
     for correo in correos:
-        enviados = Enviados.objects.filter(propietario__username=usuario, correo=correo)
+        enviados = Enviados.objects.filter(propietario=usuario, correo=correo)
 
         correo_datos = {
             'correo': correo,

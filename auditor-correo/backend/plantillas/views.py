@@ -19,10 +19,9 @@ def index(request):
 
     if request.method == 'GET':
         
-        datos, forms = obtener_datos_plantillas(request)
+        datos = obtener_datos_plantillas(request)
         data = {
-            'datos' : datos,
-            'forms' : forms,
+            'datos' : datos
         }
 
     elif request.method == 'POST':
@@ -37,19 +36,17 @@ def index(request):
             pass
 
 
-        datos, forms = obtener_datos_plantillas(request)
+        datos = obtener_datos_plantillas(request)
 
         data = {
-            'datos' : datos,
-            'forms' : forms,
+            'datos' : datos
         }
 
     else:
 
-        data, forms = obtener_datos_plantillas(request)
+        data = obtener_datos_plantillas(request)
         data = {
-            'datos' : datos,
-            'forms' : forms,
+            'datos' : datos
         }
 
     return render(request, 'backend/plantillas/index.html', data)
@@ -77,7 +74,6 @@ def añadir(request):
                 plantilla.imagen = request.FILES['imagen']
             plantilla.plantilla = request.POST['plantilla']
             plantilla.redireccion = request.POST['redireccion']
-            plantilla.script = request.POST['script']
             plantilla.emisor = emisor
             plantilla.propietario = request.user
             
@@ -127,7 +123,6 @@ def editar(request, id=None):
 
             plantilla.plantilla = request.POST['plantilla']
             plantilla.redireccion = request.POST['redireccion']
-            plantilla.script = request.POST['script']
             plantilla.emisor = emisor  # <- Change is here
 
             plantilla.full_clean()  
@@ -162,9 +157,8 @@ def editar(request, id=None):
 @login_required(login_url='/accounts/login/')
 def obtener_datos_plantillas(request):
     usuario = User.get_username(request.user)
-    datos = Plantillas.objects.filter(propietario__username=usuario)
-    forms = None
-    return datos, forms
+    datos = list(Plantillas.objects.filter(propietario__username=usuario))
+    return datos
 
 
 
