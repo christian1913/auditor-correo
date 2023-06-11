@@ -141,7 +141,7 @@ def añadir_correo_emisor(request):
         messages.add_message(request, messages.ERROR, 'Error al crear el correo o el correo ya existe')
     else:
         usuario = User.objects.get(username=usuario)
-        Emisores.objects.create(correo=request.POST['correo'], contraseña=request.POST['contraseña'],smpt=request.POST['smpt'], puerto=request.POST['puerto'],propietario=usuario)
+        Emisores.objects.create(correo=request.POST['correo'], contraseña=request.POST['contraseña'],smtp=request.POST['smtp'], puerto=request.POST['puerto'],propietario=usuario)
 
         messages.add_message(request, messages.SUCCESS, 'Correo creado correctamente')
     return 
