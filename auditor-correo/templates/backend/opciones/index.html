@@ -78,7 +78,7 @@
                         <h5>Editar el correo emisor <span class="orange">{{ c }}</span>.</h5>
                         <div class="flex">
                             {% csrf_token %}
-                            <input autocomplete="on" name="instruccion" id="instruccion" value="editar-correo-emisor" type="hidden">
+                            <input autocomplete="on" name="instruccion" id="instruccion" value="editar-emisor" type="hidden">
                             <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
                             <h6>Correo:</h6>
                             <input type="text" class="Before-FS" autocomplete="off" name="correo">
@@ -101,7 +101,7 @@
                         <h5>Introduce "eliminar" para eliminar el emisor <span class="orange">{{ c }}</span>:</h5>
                         <div>
                             {% csrf_token %}
-                            <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-correo-emisor" type="hidden">
+                            <input autocomplete="on" name="instruccion" id="instruccion" value="eliminar-emisor" type="hidden">
                             <input autocomplete="on" name="id" id="id" value="{{ c.id }}" type="hidden">
                             <input type="text" class="Before-FS" required="True" autocomplete="off" name="eliminar">
                             <input type="submit" class="submit" value="Eliminar">
