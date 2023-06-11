@@ -149,12 +149,10 @@ def añadir_correo_emisor(request):
 
 @login_required(login_url='/accounts/login/')
 def editar_correo_emisor(request):
-
     try:
-
         usuario = User.get_username(request.user)
         usuario = User.objects.get(username=usuario)
-        
+
         id = request.POST['id']
         correo = request.POST['correo']
         contraseña = request.POST['contraseña']
@@ -165,8 +163,8 @@ def editar_correo_emisor(request):
 
         messages.add_message(request, messages.SUCCESS, 'Emisor editado correctamente')
 
-    except: 
-        messages.add_message(request, messages.ERROR, 'Error intentando editar el emisor')
+    except Exception as e:
+        messages.add_message(request, messages.ERROR, 'Error intentando editar el emisor: {}'.format(e))
 
     return 
 

@@ -120,6 +120,7 @@ def obtener_datos_correos(request, id):
         }
 
         datos.append(correo_datos)
+        print(datos)
     return datos
 
 
