@@ -158,10 +158,10 @@ def editar_correo_emisor(request):
         id = request.POST['id']
         correo = request.POST['correo']
         contraseña = request.POST['contraseña']
-        smpt = request.POST['smpt']
+        smtp = request.POST['smtp']
         puerto = request.POST['puerto']
 
-        Emisores.objects.filter(id=id).update(correo=correo, contraseña=contraseña, smpt=smpt, puerto=puerto, propietario=usuario)
+        Emisores.objects.filter(id=id).update(correo=correo, contraseña=contraseña, smtp=smtp, puerto=puerto, propietario=usuario)
 
         messages.add_message(request, messages.SUCCESS, 'Emisor editado correctamente')
 
