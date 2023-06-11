@@ -26,28 +26,19 @@
             <tr>
                 <td>{{ x.enviado.fecha_envio }}</td>
                 <td>{{ x.enviado.plantilla.nombre }}</td>
-
-                {% if x.estatus_mail %}
-                    <td>{{ x.estatus_mail.fecha }}</td>
+                <td>{{ x.estatus_mail.fecha }}</td>
+                <td>{{ x.estatus_web.ip }}</td>
+                <td>{{ x.estatus_web.pais }}</td>
+                <td>{{ x.estatus_web.idioma }}</td>
+                <td>{{ x.estatus_web.fecha }}</td>
+                {% if x.enviado.plantilla.tipo == "phishing" %}
+                    <td>{{ x.credenciales.usuario }}</td>
+                    <td>{{ x.credenciales.contraseña }}</td>
                 {% endif %}
-
-                {% if x.estatus_web %}
-                    <td>{{ x.estatus_web.ip }}</td>
-                    <td>{{ x.estatus_web.pais }}</td>
-                    <td>{{ x.estatus_web.idioma }}</td>
-                    <td>{{ x.estatus_web.fecha }}</td>
-                    {% if x.enviado.plantilla.tipo == "phishing" %}
-                        <td>{{ x.credenciales.usuario }}</td>
-                        <td>{{ x.credenciales.contraseña }}</td>
-                    {% endif %}
-                {% endif %}
-
                 {% if x.enviado.plantilla.tipo == "script" %}
-                    {% if x.estatus_pc %}
-                        <td>{{ x.estatus_pc.ip }}</td>
-                        <td>{{ x.estatus_pc.pais }}</td>
-                        <td>{{ x.estatus_pc.fecha }}</td>
-                    {% endif %}
+                    <td>{{ x.estatus_pc.ip }}</td>
+                    <td>{{ x.estatus_pc.pais }}</td>
+                    <td>{{ x.estatus_pc.fecha }}</td>
                 {% endif %}
             </tr>
         </table>
@@ -60,3 +51,4 @@
         {% endif %}
     {% endfor %}
 {% endfor %}
+
