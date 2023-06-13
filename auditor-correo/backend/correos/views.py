@@ -152,14 +152,14 @@ def cambiar_correo_grupo(request):
 
 def añadir_correo(request):
 
-    usuario = User.get_username(request.user)
-    comprabacion = Correos.objects.filter(correo=request.POST['correo'], propietario__username=usuario)
+    usuario = User.objects.get(username=usuario)
+    comprabacion = Correos.objects.filter(correo=request.POST['correo'], propietario=usuario)
     if comprabacion: 
         messages.add_message(request, messages.ERROR, 'Error al añadir el correo o el correo ya existe')
     else:
         usuario = User.objects.get(username=usuario)
-        departameto = Grupos.objects.get(id=request.POST['grupo'], propietario=usuario)
-        Correos.objects.create(correo=request.POST['correo'], grupo=departameto, propietario=usuario)
+        grupo = Grupos.objects.get(id=request.POST['grupo'], propietario=usuario)
+        Correos.objects.create(correo=request.POST['correo'], grupo=grupo, propietario=usuario)
         messages.add_message(request, messages.SUCCESS, 'Correo añadido correctamente')
     return 
 
