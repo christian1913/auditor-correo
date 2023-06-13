@@ -7,7 +7,6 @@ urlpatterns = [
 
     path('ruta/<str:int>', views.web_estatus, name='web-estatus'),
     path('logo/<int:int>', views.mail_status, name='mail-estatus'),
-    path('registro-documento/<str:int>', views.pc_estatus, name='pc-estatus'),
 
     
 ]

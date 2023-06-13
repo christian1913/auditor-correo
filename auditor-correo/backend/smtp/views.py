@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from django.contrib.auth.models import User
 from django.contrib import messages 
-from backend.registradores.models import Estatus_Mail, Estatus_Web
+from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web
 from backend.plantillas.models import Plantillas
 from backend.correos.models import Correos
 from backend.smtp.models import Enviados
@@ -38,6 +38,7 @@ def auditar(request):
         )
         Estatus_Mail.objects.create(enviado=enviado)
         Estatus_Web.objects.create(enviado=enviado)
+        Estatus_PC.objects.create(enviado=enviado)
         plantilla = Plantillas.objects.get(id=request.POST['plantilla'])
         plantilla_id = enviado.plantilla.id
 

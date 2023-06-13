@@ -131,7 +131,20 @@
                                     <td>{{ enviado.credenciales.contraseña }}</td>
                                 </tr>
                             {% endif %}
-
+                            {% if enviado.enviado.plantilla.tipo == 'acceso' %}
+                                <tr>
+                                    <th>IP Dispositivo</th>
+                                    <td>{{ enviado.estatus_pc.ip }}</td>
+                                </tr>
+                                <tr>
+                                    <th>País</th>
+                                    <td>{{ enviado.estatus_pc.pais }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha ejecución</th>
+                                    <td>{{ enviado.estatus_pc.fecha }}</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                     <!--button send-->
@@ -141,7 +154,7 @@
                     {% endif %}
                     
                     {% if enviado.enviado.plantilla.tipo == 'acceso' %}
-                        {% if enviado.estatus_web.idioma != None %}
+                        {% if enviado.estatus_pc.fecha != None %}
                             <a href="{% url 'acceso' id=enviado.enviado.id %}"><button class="button blue-btn"><h6>Acceso</h6></button></a>
                         {% endif %}
                         <button onclick="toggleModal('eliminar-entrada-{{ enviado.enviado.id }}')" class="button blue-btn"><h6>Eliminar entrada</h6></button>

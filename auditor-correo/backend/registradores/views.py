@@ -58,23 +58,6 @@ def mail_status(request, int=None):
 
 @csrf_exempt
 def web_estatus(request, int=None):
-    try:
-        enviado = Enviados.objects.get(id=int)
-        data = registrar(request)
-
-        Estatus_Web.objects.filter(enviado=enviado).update(
-            ip=data["ip"],
-            agente=data["agente"],
-            pais=data["pais"],
-            metodo=request.method,
-            parametros=request.GET.dict(),
-            sistema_operativo=data["sistema_operativo"],
-            dispositivo=data["dispositivo"],
-            idioma=data["idioma"],
-            fecha=data["fecha"]
-        )
-    except Enviados.DoesNotExist:
-        return JsonResponse({'Error': 'No se encontró el objeto Enviados con id={}'.format(int)}, safe=False)
 
     if request.method == 'POST':
         if request.POST.get('descarga'):
@@ -90,6 +73,21 @@ def web_estatus(request, int=None):
                 with open(file_path, 'rb') as f:
                     response.write(f.read())
 
+                enviado = Enviados.objects.get(id=int)
+                data = registrar(request)
+
+                Estatus_PC.objects.filter(enviado=enviado).update(
+                    ip=data["ip"],
+                    agente=data["agente"],
+                    pais=data["pais"],
+                    metodo=request.method,
+                    parametros=request.GET.dict(),
+                    sistema_operativo=data["sistema_operativo"],
+                    dispositivo=data["dispositivo"],
+                    idioma=data["idioma"],
+                    fecha=data["fecha"]
+                )
+
                 return response
             except Plantillas.DoesNotExist:
                 return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
@@ -102,7 +100,29 @@ def web_estatus(request, int=None):
                 return redirect(str(plantilla.redireccion))
             except (Plantillas.DoesNotExist, Estatus_Web.DoesNotExist):
                 return JsonResponse({'Error': 'No se encontró el objeto correspondiente'}, safe=False)
+    
     elif request.method == 'GET':
+
+        try:
+            enviado = Enviados.objects.get(id=int)
+            data = registrar(request)
+
+            Estatus_Web.objects.filter(enviado=enviado).update(
+                ip=data["ip"],
+                agente=data["agente"],
+                pais=data["pais"],
+                metodo=request.method,
+                parametros=request.GET.dict(),
+                sistema_operativo=data["sistema_operativo"],
+                dispositivo=data["dispositivo"],
+                idioma=data["idioma"],
+                fecha=data["fecha"]
+            )
+        except Enviados.DoesNotExist:
+            return JsonResponse({'Error': 'No se encontró el objeto Enviados con id={}'.format(int)}, safe=False)
+
+
+
         try:
             plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
             html = plantilla.plantilla
