@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'backend.plantillas',
     'backend.smtp',
     'backend.opciones',
+    'backend.accesos',
     'frontend',
 ]
 

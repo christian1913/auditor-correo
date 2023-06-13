@@ -154,7 +154,7 @@
                     {% endif %}
                     
                     {% if enviado.enviado.plantilla.tipo == 'acceso' %}
-                        <button onclick="toggleModal('acceso-{{ enviado.enviado.id }}')" class="button blue-btn"><h6>Acceso</h6></button>
+                        <a href="{% url 'acceso' id=enviado.enviado.id %}"><button class="button blue-btn"><h6>Acceso</h6></button></a>
                         <button onclick="toggleModal('eliminar-entrada-{{ enviado.enviado.id }}')" class="button blue-btn"><h6>Eliminar entrada</h6></button>
                     {% endif %}
                     </div>
@@ -201,51 +201,65 @@
         </div>
     </div>
 
-    <!-- Pop-up "Acceso" -->
-    <div id="acceso-{{ enviado.enviado.id }}" class="modal-acceso popupContentWrapper-acceso">
-        <div class="popup-content-acceso">
-            <span onclick="toggleModal('acceso-{{ enviado.enviado.id }}')" class="close-acceso">&times;</span>
-            <!-- Contenido del pop-up "Acceso" aquí -->
-        </div>
-    </div>
 
-    {% endfor %}
 {% endfor %}
+{% endfor %}
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  document.addEventListener("click", function(event) {
-    const $trigger = document.querySelectorAll(".buttonSelector");
-    let clickedOutside = true;
-    $trigger.forEach(element => {
-      if (element === event.target || element.contains(event.target)) {
-        clickedOutside = false;
-      }
-    });
-    if (clickedOutside) {
-      const $dropdowns = document.querySelectorAll(".filterList");
-      $dropdowns.forEach(element => {
-        if (element.classList.contains("active")) {
-          element.classList.remove("active");
-          element.classList.add("inactive");
+    document.addEventListener("click", function(event) {
+        const $trigger = document.querySelectorAll(".buttonSelector");
+        let clickedOutside = true;
+        $trigger.forEach(element => {
+            if (element === event.target || element.contains(event.target)) {
+                clickedOutside = false;
+            }
+        });
+        if (clickedOutside) {
+            const $dropdowns = document.querySelectorAll(".filterList");
+            $dropdowns.forEach(element => {
+                if (element.classList.contains("active")) {
+                    element.classList.remove("active");
+                    element.classList.add("inactive");
+                }
+            });
         }
-      });
-    }
-  });
-
-  document.addEventListener("click", function(event) {
-    const $popups = document.querySelectorAll(".popupContentWrapper");
-    $popups.forEach(popup => {
-      if (popup.contains(event.target)) {
-        return;
-      }
-      if (popup.classList.contains("active")) {
-        toggleModal(popup.id);
-      }
     });
-  });
+
+    document.addEventListener("click", function(event) {
+        const $popups = document.querySelectorAll(".popupContentWrapper-acceso");
+        $popups.forEach(popup => {
+            if (popup.contains(event.target)) {
+                return;
+            }
+            if (popup.style.display === "block") {
+                toggleModal(popup.id);
+            }
+        });
+    });
+
+
+    const modals = document.querySelectorAll(".modal-acceso");
+    modals.forEach(modal => {
+        updateModal(modal.id);
+    });
+
 });
 
+function updateModal(modalId) {
+    const pageElement = document.getElementById(`page-${modalId}`);
+    const directoriosElement = document.getElementById(`directorios-${modalId}`);
+    const page = Number(pageElement.textContent);
+
+    for (let i = 0; i < directoriosElement.children.length; i++) {
+        if (i >= (page - 1) * 10 && i < page * 10) {
+            directoriosElement.children[i].style.display = 'flex';
+        } else {
+            directoriosElement.children[i].style.display = 'none';
+        }
+    }
+}
 
 function toggleTable(tableId) {
     const tableBox = document.getElementById(`table-box-${tableId.split('-')[1]}-${tableId.split('-')[2]}`);
@@ -262,6 +276,18 @@ function toggleTable(tableId) {
         tableBox.classList.remove('active');
     }
 }
+
+function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (modal.style.display === "block") {
+        modal.style.display = "none";
+    } else {
+        modal.style.display = "block";
+    }
+}
+
 </script>
+
 
 {% endblock %}

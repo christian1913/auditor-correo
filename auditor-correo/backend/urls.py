@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('backend.plantillas.urls')),
     path('', include('backend.registradores.urls')),
     path('', include('backend.opciones.urls')),
+    path('', include('backend.accesos.urls')),
 
 
 

@@ -1,0 +1,46 @@
+{% extends "backend/base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="acceso" class="modal-acceso contentWrapper-acceso">
+    <div class="header">
+        <form method="post" action="{% url 'acceso' id=enviado %}">
+            {% csrf_token %}
+            <input type="hidden" name="instruccion" value="acceso-atras">
+            <button type="submit" class="icon-back">←</button>
+        </form>
+        <h2 class="ruta">{{ ruta }}</h2>
+    </div>
+    <div class="content-acceso">
+        <!-- Contenido del "Acceso" aquí -->
+        <div class="content-directorios">
+            {% for directorio in directorios %}
+            <div class="directorio-container">
+                {% if directorio.1 == 'dir' %}
+                <form method="post" action="{% url 'acceso' id=enviado %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="instruccion" value="acceso-directorio">
+                    <input type="hidden" name="directorio" value="{{ directorio.0 }}">
+                    <button type="submit" class="icono-dir"></button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'acceso' id=enviado %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="instruccion" value="acceso-descarga">
+                    <input type="hidden" name="archivo" value="{{ directorio.0 }}">
+                    <button type="submit" class="icono-file"></button>
+                </form>
+                {% endif %}
+                <div class="nombre-directorio">{{ directorio.0 }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="page-acceso" style="display: none;">1</div>
+    </div>
+</div>
+
+{% block topbar-acceso %}
+{% include 'backend/acceso/topbar-acceso.html' %}
+{% endblock %}
+
+{% endblock %}

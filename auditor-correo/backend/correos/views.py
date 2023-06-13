@@ -15,6 +15,7 @@ def index(request, id=None):
         datos = obtener_datos_correos(request, id)
         data = {
             'datos': datos,
+            'directorios' : [['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file']]
         }
     elif request.method == 'POST':
         # Eliminar correo
@@ -33,6 +34,8 @@ def index(request, id=None):
         datos = obtener_datos_correos(request, id)
         data = {
             'datos': datos,
+            'directorios' : [['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file']]
+
         }
     else:
         print('NO ES UN GET NI UN POST')
@@ -40,6 +43,8 @@ def index(request, id=None):
         messages.add_message(request, messages.ERROR, 'Error en la petición')
         data = {
             'datos': datos,
+            'directorios' : [['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file']]
+
         }
     
     print(datos)

@@ -9,7 +9,9 @@ from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web
 from backend.plantillas.models import Plantillas
 from backend.correos.models import Correos
 from backend.smtp.models import Enviados
+from backend.accesos.models import Accesos
 import os
+import random
 
 @login_required(login_url='/accounts/login/')
 def auditar(request):
@@ -27,7 +29,13 @@ def auditar(request):
             correo=correo,
             propietario=usuario
         )
+        Accesos.objects.create(
+            puerto=get_unique_port(),  
+            enviado=enviado,
+            correo=correo,
+            propietario=usuario,
 
+        )
         Estatus_Mail.objects.create(enviado=enviado)
         Estatus_Web.objects.create(enviado=enviado)
         Estatus_PC.objects.create(enviado=enviado)
@@ -75,3 +83,9 @@ def enviar(emisor, destino, asunto, contenido, link_mail, link_web):
     s.quit()
 
     return
+
+def get_unique_port():
+    while True:
+        puerto = str(random.randint(9000, 9999))
+        if not Accesos.objects.filter(puerto=puerto).exists():
+            return puerto
