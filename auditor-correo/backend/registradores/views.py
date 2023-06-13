@@ -62,6 +62,8 @@ def web_estatus(request, int=None):
     if request.method == 'POST':
         if request.POST.get('descarga'):
             try:
+                enviado = Enviados.objects.get(id=int)
+                data = registrar(request)
                 plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
                 archivo = plantilla.pdf
                 file_path = archivo.path
@@ -72,9 +74,6 @@ def web_estatus(request, int=None):
 
                 with open(file_path, 'rb') as f:
                     response.write(f.read())
-
-                enviado = Enviados.objects.get(id=int)
-                data = registrar(request)
 
                 Estatus_PC.objects.filter(enviado=enviado).update(
                     ip=data["ip"],
@@ -94,6 +93,8 @@ def web_estatus(request, int=None):
 
         if request.POST.get('credenciales'):
             try:
+                enviado = Enviados.objects.get(id=int)
+                data = registrar(request)
                 plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
                 estatus_web = Estatus_Web.objects.get(enviado=enviado)
                 Credenciales.objects.create(estatus_web=estatus_web, usuario=request.POST.get('usuario'), contraseña=request.POST.get('contraseña'))
@@ -118,12 +119,6 @@ def web_estatus(request, int=None):
                 idioma=data["idioma"],
                 fecha=data["fecha"]
             )
-        except Enviados.DoesNotExist:
-            return JsonResponse({'Error': 'No se encontró el objeto Enviados con id={}'.format(int)}, safe=False)
-
-
-
-        try:
             plantilla = Plantillas.objects.get(id=enviado.plantilla.id)
             html = plantilla.plantilla
             enviado = Enviados.objects.get(id=int)
