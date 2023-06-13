@@ -113,29 +113,6 @@ def web_estatus(request, int=None):
             return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
 
 
-@csrf_exempt
-def pc_estatus(request, int=None):
-    if request.method == 'POST':
-        try:
-            enviado = Enviados.objects.get(id=int)
-            data = registrar(request)
-
-            Estatus_PC.objects.filter(enviado=enviado).update(
-                ip=data["ip"],
-                agente=data["agente"],
-                pais=data["pais"],
-                metodo=request.method,
-                parametros=request.GET.dict(),
-                sistema_operativo=data["sistema_operativo"],
-                dispositivo=data["dispositivo"],
-                idioma=data["idioma"],
-                fecha=data["fecha"]
-            )
-            return JsonResponse({'Estatus':'ok'}, safe=False)
-        except Enviados.DoesNotExist:
-            return JsonResponse({'Error': 'No se encontró el objeto Enviados con id={}'.format(int)}, safe=False)
-    else:
-        return JsonResponse({'Estatus':'bad request'}, safe=False)
 
 def registrar(request):
     ip = request.META.get('REMOTE_ADDR')

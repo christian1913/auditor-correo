@@ -6,7 +6,7 @@ from backend.grupos.models import Grupos
 from backend.smtp.models import Enviados
 from backend.correos.models import Correos
 from backend.plantillas.models import Plantillas
-from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
+from backend.registradores.models import Estatus_Mail, Estatus_Web, Credenciales
 
 
 @login_required(login_url='/accounts/login/')
@@ -81,7 +81,6 @@ def obtener_datos_correos(request, id):
         for enviado in enviados:
             estatus_web = Estatus_Web.objects.filter(enviado=enviado).first()
             estatus_mail = Estatus_Mail.objects.filter(enviado=enviado).first()
-            estatus_pc = Estatus_PC.objects.filter(enviado=enviado).first()
 
             credenciales = None
             if estatus_web:
@@ -94,7 +93,6 @@ def obtener_datos_correos(request, id):
                 'enviado': enviado,
                 'estatus_web': estatus_web,
                 'estatus_mail': estatus_mail,
-                'estatus_pc': estatus_pc,
                 'credenciales': credenciales,
             }
 

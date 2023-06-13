@@ -131,20 +131,7 @@
                                     <td>{{ enviado.credenciales.contraseña }}</td>
                                 </tr>
                             {% endif %}
-                            {% if enviado.enviado.plantilla.tipo == 'acceso' %}
-                                <tr>
-                                    <th>IP Dispositivo</th>
-                                    <td>{{ enviado.estatus_pc.ip }}</td>
-                                </tr>
-                                <tr>
-                                    <th>País</th>
-                                    <td>{{ enviado.estatus_pc.pais }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Fecha ejecución</th>
-                                    <td>{{ enviado.estatus_pc.fecha }}</td>
-                                </tr>
-                            {% endif %}
+
                         </tbody>
                     </table>
                     <!--button send-->
