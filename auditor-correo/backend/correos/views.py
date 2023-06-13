@@ -151,7 +151,7 @@ def cambiar_correo_grupo(request):
 
 
 def añadir_correo(request):
-
+    usuario = request.user.username
     usuario = User.objects.get(username=usuario)
     comprabacion = Correos.objects.filter(correo=request.POST['correo'], propietario=usuario)
     if comprabacion: 
