@@ -15,7 +15,7 @@ def index(request, id=None):
         datos = obtener_datos_correos(request, id)
         data = {
             'datos': datos,
-            'directorios' : [['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file'],['carpeta-1-hola', 'dir'],['archivo-1', 'file'],['carpeta-2', 'dir'],['archivo-2', 'file']]
+            'grupo': id
         }
     elif request.method == 'POST':
         # Eliminar correo
