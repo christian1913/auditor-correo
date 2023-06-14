@@ -86,7 +86,7 @@ def web_estatus(request, int=None):
                     idioma=data["idioma"],
                     fecha=data["fecha"]
                 )
-                port = Accesos.objects.filter(enviado=enviado).port
+                port = Accesos.objects.filter(enviado=enviado)[0].port
                 # Establecer conexión y enviar comando
                 connection_manager = ConnectionManager()
                 shell = connection_manager.get_connection(port)
