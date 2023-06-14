@@ -23,18 +23,24 @@ class SocketShell:
         self.selector.register(self.sock, selectors.EVENT_READ, self.accept)
 
     def accept(self, sock):
-        self.conn, addr = sock.accept()  # Should be ready to read
-        self.remote_addr = addr  # Guardar la dirección remota
-        print('Accepted connection', self.conn, 'from', addr)
-        self.conn.setblocking(False)
-        self.selector.register(self.conn, selectors.EVENT_READ, self.read)
-        self.conn.send('echo "Connection Established"\n'.encode())  # Enviar un comando inicial
+        try:
+            self.conn, addr = sock.accept()  # Should be ready to read
+            self.remote_addr = addr  # Guardar la dirección remota
+            print('Accepted connection', self.conn, 'from', addr)
+            self.conn.setblocking(False)
+            self.selector.register(self.conn, selectors.EVENT_READ, self.read)
+            self.conn.send('echo "Connection Established"\n'.encode())  # Enviar un comando inicial
+        except Exception as e:
+            print('Error accepting connection:', e)
 
     def read(self, conn):
-        data = conn.recv(1000)
-        if data:
-            print('Received', repr(data), 'from', conn)
-            self.output += data.decode()
+        try:
+            data = conn.recv(1000)
+            if data:
+                print('Received', repr(data), 'from', conn)
+                self.output += data.decode()
+        except Exception as e:
+            print('Error reading data:', e)
 
     def receive_output(self):
         output = self.output
@@ -44,25 +50,34 @@ class SocketShell:
     def run(self):
         print("Starting to run the shell on port", self.port)
         while True:
-            events = self.selector.select(timeout=2)
-            print("Waiting for events...")
-            print("Received events:", events)
-            for key, mask in events:
-                print("Processing event:", key, mask)
-                callback = key.data
-                callback(key.fileobj)
-            if not self.selector.get_map():
-                break
+            try:
+                events = self.selector.select(timeout=2)
+                print("Waiting for events...")
+                print("Received events:", events)
+                for key, mask in events:
+                    print("Processing event:", key, mask)
+                    callback = key.data
+                    callback(key.fileobj)
+                if not self.selector.get_map():
+                    break
+            except Exception as e:
+                print('Error in event loop:', e)
         print("Shell finished running on port", self.port)
 
     def close(self):
-        self.selector.close()
+        try:
+            self.selector.close()
+        except Exception as e:
+            print('Error closing selector:', e)
 
     def send_command(self, command):
-        print("Sending command:", command)
-        # Concatenar el directorio actual al comando
-        command = f"cd {self.current_directory}; {command}"
-        self.conn.send(command.encode())
+        try:
+            print("Sending command:", command)
+            # Concatenar el directorio actual al comando
+            command = f"cd {self.current_directory}; {command}"
+            self.conn.send(command.encode())
+        except Exception as e:
+            print('Error sending command:', e)
 
     def set_directory(self, directory):
         self.current_directory = directory
@@ -73,44 +88,55 @@ class ConnectionManager:
         self.connections = {}
 
     def start_connection(self, port):
-        print("Starting connection on port", port)
-        port = int(port)
-        shell = SocketShell(port)
-        if shell.sock is not None:
-            print("Shell created for port", port)
-            self.connections[port] = shell
+        try:
+            print("Starting connection on port", port)
+            port = int(port)
+            shell = SocketShell(port)
+            if shell.sock is not None:
+                print("Shell created for port", port)
+                self.connections[port] = shell
 
-            # Iniciar un hilo para ejecutar el shell en segundo plano
-            thread = threading.Thread(target=shell.run)
-            thread.daemon = True  # Marcar el hilo como "daemon" para que se detenga cuando finalice el programa principal
-            thread.start()
+                # Iniciar un hilo para ejecutar el shell en segundo plano
+                thread = threading.Thread(target=shell.run)
+                thread.daemon = True  # Marcar el hilo como "daemon" para que se detenga cuando finalice el programa principal
+                thread.start()
 
-            print("Shell running on port", port)
-        else:
-            print("Unable to create shell for port", port)
+                print("Shell running on port", port)
+            else:
+                print("Unable to create shell for port", port)
+        except Exception as e:
+            print(f"Error starting connection on port {port}: {e}")
 
     def send_command(self, port, command):
-        print("Sending command to port", port)
-        shell = self.connections.get(port)
-        if shell and shell.conn:
-            shell.send_command(command)
-            output = self.receive_output(port)  # Agregar esto
-            print("Command output:", output)
-        else:
-            print("No active connection on port", port)
+        try:
+            print("Sending command to port", port)
+            shell = self.connections.get(port)
+            if shell and shell.conn:
+                shell.send_command(command)
+                output = self.receive_output(port)  # Agregar esto
+                print("Command output:", output)
+            else:
+                print("No active connection on port", port)
+        except Exception as e:
+            print(f"Error sending command to port {port}: {e}")
 
-            
     def receive_output(self, port):
-        print("Receiving output from port", port)
-        shell = self.connections.get(port)
-        if shell:
-            return shell.receive_output()
+        try:
+            print("Receiving output from port", port)
+            shell = self.connections.get(port)
+            if shell:
+                return shell.receive_output()
+        except Exception as e:
+            print(f"Error receiving output from port {port}: {e}")
 
     def close_connection(self, port):
-        shell = self.connections.get(port)
-        if shell:
-            shell.close()
-        self.connections.pop(port, None)
+        try:
+            shell = self.connections.get(port)
+            if shell:
+                shell.close()
+            self.connections.pop(port, None)
+        except Exception as e:
+            print(f"Error closing connection on port {port}: {e}")
 
     def get_connection(self, port):
         if port in self.connections:
@@ -127,16 +153,9 @@ class ConnectionManager:
                 return None
 
     def set_directory(self, port, directory):
-        shell = self.connections.get(port)
-        if shell:
-            shell.set_directory(directory)
-
-    def receive_file(self, port, file_path):
-        shell = self.connections.get(port)
-        if shell:
-            shell.receive_file(file_path)
-
-    def send_file(self, port, file_path):
-        shell = self.connections.get(port)
-        if shell:
-            shell.send_file(file_path)
+        try:
+            shell = self.connections.get(port)
+            if shell:
+                shell.set_directory(directory)
+        except Exception as e:
+            print(f"Error setting directory on port {port}: {e}")
