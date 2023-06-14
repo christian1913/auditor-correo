@@ -31,7 +31,7 @@ def index(request, id=None):
             shell.send_command("ls -la")
             output = shell.receive_output()
             print("Command output:", output)  # Añadir este mensaje
-            lines = output.split("\n")[1:]  # Sin la primera línea (total x)
+            lines = output.split("\n")[1:] # Eliminar la primera línea
             for line in lines:
                 if line: # Ignora las líneas vacías
                     parts = line.split()
