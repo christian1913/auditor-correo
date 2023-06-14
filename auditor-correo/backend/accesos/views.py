@@ -16,50 +16,49 @@ def index(request, id=None):
         enviado = get_object_or_404(Enviados, id=id)
         acceso = get_object_or_404(Accesos, enviado=enviado)
         puerto = int(acceso.puerto)
-        if puerto not in connection_manager.connections:
-            try:
-                connection_manager.start_connection(puerto)
-                print(f"Connection started on port {puerto}")
-            except Exception as e:
-                print(f"Error starting connection on port {puerto}: {e}")
+        shell = connection_manager.get_connection(puerto)
+        if shell:
+            # La conexión existe o se inició correctamente
+            print(f"Using existing connection on port {puerto}")
 
-        connection_manager.send_command(puerto, 'ls -la') # comando ls -la
-        output = connection_manager.receive_output(puerto)
-        print("Command output:", output)  # Añadir este mensaje
-        lines = output.split("\n") # Sin eliminar la primera línea
-        for line in lines:
-            if line: # Ignora las líneas vacías
-                parts = line.split()
-                perm = parts[0]
-                name = parts[-1]
-                if perm[0] == 'd':
-                    data_list.append([name, 'dir'])
+            # Obtener la ruta del directorio actual
+            shell.send_command(puerto, 'pwd')
+            pwd_output = shell.receive_output(puerto)
+            print("PWD output:", pwd_output)  # Añadir este mensaje
+            current_path = pwd_output.strip() # Remover los espacios en blanco en los extremos
+
+            # Ejecutar el comando ls -la
+            shell.send_command(puerto, 'ls -la')
+            output = shell.receive_output(puerto)
+            print("Command output:", output)  # Añadir este mensaje
+            lines = output.split("\n") # Sin eliminar la primera línea
+            for line in lines:
+                if line: # Ignora las líneas vacías
+                    parts = line.split()
+                    perm = parts[0]
+                    name = parts[-1]
+                    if perm[0] == 'd':
+                        data_list.append([name, 'dir'])
+                    else:
+                        data_list.append([name, 'file'])
+
+            if request.method == 'POST':
+                if request.POST['instruccion'] == 'acceso-atras':
+                    shell.send_command(puerto, 'cd ..')
+                elif request.POST['instruccion'] == 'acceso-directorio':
+                    directory = request.POST.get('directorio')
+                    shell.send_command(puerto, f'cd {directory}')
+                elif request.POST['instruccion'] == 'acceso-descarga':
+                    file = request.POST.get('file')
+                    shell.send_command(puerto, f'download {file}')
                 else:
-                    data_list.append([name, 'file'])
+                    print('None of the selections is correct')
+                    messages.add_message(request, messages.ERROR, 'Error in request')
 
-        # Obtener la ruta del directorio actual
-        connection_manager.send_command(puerto, 'pwd')
-        pwd_output = connection_manager.receive_output(puerto)
-        print("PWD output:", pwd_output)  # Añadir este mensaje
-        current_path = pwd_output.strip() # Remover los espacios en blanco en los extremos
+        else:
+            # No se pudo iniciar la conexión
+            print(f"Unable to establish connection on port {puerto}")
 
-        if request.method == 'POST':
-            if request.POST['instruccion'] == 'acceso-atras':
-                connection_manager.send_command(puerto, 'cd ..')
-            elif request.POST['instruccion'] == 'acceso-directorio':
-                directory = request.POST.get('directorio')
-                connection_manager.send_command(puerto, f'cd {directory}')
-            elif request.POST['instruccion'] == 'acceso-descarga':
-                file = request.POST.get('file')
-                connection_manager.send_command(puerto, f'download {file}')
-            else:
-                print('None of the selections is correct')
-                messages.add_message(request, messages.ERROR, 'Error in request')
+            # Resto del código en caso de no tener conexión...
 
-    context = {
-        'directorios': data_list,
-        'enviado': id,
-        'ruta': current_path, 
-    }
-
-    return render(request, 'backend/acceso/index.html', context)
+    return render(request, 'backend/acceso/index.html', {'directorios': data_list, 'enviado': id, 'ruta': current_path})

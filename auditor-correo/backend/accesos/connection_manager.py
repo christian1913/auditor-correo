@@ -101,3 +101,17 @@ class ConnectionManager:
         if shell:
             shell.close()
         self.connections.pop(port, None)
+
+    def get_connection(self, port):
+        if port in self.connections:
+            # La conexión ya existe, la recuperamos
+            return self.connections[port]
+        else:
+            # La conexión no existe, la iniciamos
+            try:
+                self.start_connection(port)
+                print(f"Connection started on port {port}")
+                return self.connections[port]
+            except Exception as e:
+                print(f"Error starting connection on port {port}: {e}")
+                return None
