@@ -56,4 +56,10 @@ def index(request, id=None):
                 print('None of the selections is correct')
                 messages.add_message(request, messages.ERROR, 'Error in request')
 
-    return render(request, 'backend/acceso/index.html', {'directorios': data_list, 'enviado': id, 'ruta': current_path})
+    context = {
+        'directorios': data_list,
+        'enviado': id,
+        'ruta': current_path, 
+    }
+
+    return render(request, 'backend/acceso/index.html', context)
