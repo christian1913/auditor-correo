@@ -18,9 +18,11 @@ def index(request, id=None):
         puerto = int(acceso.puerto)
         if puerto not in connection_manager.connections:
             connection_manager.start_connection(puerto)
+            print(f"Connection started on port {puerto}")
 
         connection_manager.send_command(puerto, 'ls -la') # comando ls -la
         output = connection_manager.receive_output(puerto)
+        print("Command output:", output)  # Añadir este mensaje
         lines = output.split("\n") # Sin eliminar la primera línea
         for line in lines:
             if line: # Ignora las líneas vacías
@@ -35,6 +37,7 @@ def index(request, id=None):
         # Obtener la ruta del directorio actual
         connection_manager.send_command(puerto, 'pwd')
         pwd_output = connection_manager.receive_output(puerto)
+        print("PWD output:", pwd_output)  # Añadir este mensaje
         current_path = pwd_output.strip() # Remover los espacios en blanco en los extremos
 
         if request.method == 'POST':
