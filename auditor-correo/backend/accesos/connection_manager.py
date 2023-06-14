@@ -3,13 +3,13 @@ import selectors
 
 class SocketShell:
     def __init__(self, port):
-        self.port = port
+        self.port = int(port)
         self.selector = selectors.DefaultSelector()
         self.conn = None
         self.output = ""
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('localhost', port))
+        self.sock.bind(('localhost', self.port))
         self.sock.listen()
         self.sock.setblocking(False)
         self.selector.register(self.sock, selectors.EVENT_READ, self.accept)
@@ -44,6 +44,7 @@ class ConnectionManager:
         self.connections = {}
 
     def start_connection(self, port):
+        port = int(port)
         shell = SocketShell(port)
         shell.run()
         self.connections[port] = shell

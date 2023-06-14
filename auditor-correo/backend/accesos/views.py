@@ -15,7 +15,7 @@ def index(request, id=None):
     if id:
         enviado = get_object_or_404(Enviados, id=id)
         acceso = get_object_or_404(Accesos, enviado=enviado)
-        puerto = acceso.puerto
+        puerto = int(acceso.puerto)
         if puerto not in connection_manager.connections:
             connection_manager.start_connection(puerto)
 
