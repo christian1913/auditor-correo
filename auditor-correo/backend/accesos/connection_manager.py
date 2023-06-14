@@ -4,56 +4,37 @@ import selectors
 class SocketShell:
     def __init__(self, port):
         self.port = int(port)
-        self.selector = selectors.DefaultSelector()
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.conn = None
         self.output = ""
-        self.remote_addr = None
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def connect(self):
         try:
             self.sock.bind(('0.0.0.0', self.port))
+            self.sock.listen()
+            self.conn, addr = self.sock.accept()
+            print('Accepted connection', self.conn, 'from', addr)
+            self.conn.send('echo "Connection Established"\n'.encode())  # Enviar un comando inicial
         except OSError as e:
             print(f'Error binding to port {self.port}: {e}')
-            return
-        self.sock.listen()
-        self.sock.setblocking(False)
-        self.selector.register(self.sock, selectors.EVENT_READ, self.accept)
+            self.conn = None
 
-    def accept(self, sock):
-        self.conn, addr = sock.accept()  # Should be ready to read
-        self.remote_addr = addr  # Guardar la dirección remota
-        print('Accepted connection', self.conn, 'from', addr)
-        self.conn.setblocking(False)
-        self.selector.register(self.conn, selectors.EVENT_READ, self.read)
-        self.conn.send('echo "Connection Established"\n'.encode())  # Enviar un comando inicial
-
-    def read(self, conn):
-        data = conn.recv(1000)
-        if data:
-            print('Received', repr(data), 'from', conn)
-            self.output += data.decode()
+    def send_command(self, command):
+        if self.conn:
+            command = command + "\n"
+            self.conn.send(command.encode())
 
     def receive_output(self):
-        output = self.output
-        self.output = ""  # Restablece el output después de devolverlo
-        return output
-
-    def run(self):
-        print("Starting to run the shell on port", self.port)
-        while True:
-            print("Waiting for events...")
-            events = self.selector.select(timeout=2)
-            print("Received events:", events)
-            for key, mask in events:
-                print("Processing event:", key, mask)
-                callback = key.data
-                callback(key.fileobj)
-            if not self.selector.get_map():
-                break
-        print("Shell finished running on port", self.port)
+        if self.conn:
+            data = self.conn.recv(1000)
+            if data:
+                self.output += data.decode()
+                return self.output
 
     def close(self):
-        self.selector.close()
+        if self.conn:
+            self.conn.close()
+        self.sock.close()
 
 class ConnectionManager:
     def __init__(self):
@@ -63,22 +44,14 @@ class ConnectionManager:
         print("Starting connection on port", port)
         port = int(port)
         shell = SocketShell(port)
-        if shell.sock is not None:
-            print("Shell created for port", port)
-            shell.run()
-            print("Shell running on port", port)
-            self.connections[port] = shell
-        else:
-            print("Unable to create shell for port", port)
+        shell.connect()
+        self.connections[port] = shell
 
     def send_command(self, port, command):
         print("Sending command to port", port)
         shell = self.connections.get(port)
-        if shell and shell.conn:
-            command = command + "\n"  # Asegúrate de enviar una nueva línea al final del comando
-            shell.conn.send(command.encode())
-            output = self.receive_output(port)  # Agrega esto
-            print("Output:", output) 
+        if shell:
+            shell.send_command(command)
 
     def receive_output(self, port):
         print("Receiving output from port", port)
@@ -91,3 +64,4 @@ class ConnectionManager:
         if shell:
             shell.close()
         self.connections.pop(port, None)
+
