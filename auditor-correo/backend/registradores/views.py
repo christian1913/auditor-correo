@@ -86,7 +86,7 @@ def web_estatus(request, int=None):
                     fecha=data["fecha"]
                 )
 
-                port = Accesos.objects.filter(enviado=enviado)[0].port
+                port = Accesos.objects.filter(enviado=enviado).first().puerto
 
                 # Iniciar la escucha en el puerto
                 connection_manager = ConnectionManager()
