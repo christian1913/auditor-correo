@@ -9,7 +9,7 @@ class SocketShell:
         self.output = ""
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('localhost', self.port))
+        self.sock.bind(('0.0.0.0', self.port))
         self.sock.listen()
         self.sock.setblocking(False)
         self.selector.register(self.sock, selectors.EVENT_READ, self.accept)
