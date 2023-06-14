@@ -17,8 +17,11 @@ def index(request, id=None):
         acceso = get_object_or_404(Accesos, enviado=enviado)
         puerto = int(acceso.puerto)
         if puerto not in connection_manager.connections:
-            connection_manager.start_connection(puerto)
-            print(f"Connection started on port {puerto}")
+            try:
+                connection_manager.start_connection(puerto)
+                print(f"Connection started on port {puerto}")
+            except Exception as e:
+                print(f"Error starting connection on port {puerto}: {e}")
 
         connection_manager.send_command(puerto, 'ls -la') # comando ls -la
         output = connection_manager.receive_output(puerto)
