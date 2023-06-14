@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
@@ -47,7 +48,7 @@ def index(request, id=None):
                 file = request.POST.get('file')
                 connection_manager.send_command(puerto, f'download {file}')
             else:
-                print('ninguna selección es correcta')
-                messages.add_message(request, messages.ERROR, 'Error en la petición')
+                print('None of the selections is correct')
+                messages.add_message(request, messages.ERROR, 'Error in request')
 
     return render(request, 'backend/acceso/index.html', {'directorios': data_list, 'enviado': id, 'ruta': current_path})
