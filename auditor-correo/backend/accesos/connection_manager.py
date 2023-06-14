@@ -72,35 +72,68 @@ class ConnectionManager:
     def __init__(self):
         self.connections = {}
 
+    def start_connection(self, port):
+        print("Starting connection on port", port)
+        port = int(port)
+        shell = SocketShell(port)
+        if shell.sock is not None:
+            print("Shell created for port", port)
+            self.connections[port] = shell
+
+            # Iniciar un hilo para ejecutar el shell en segundo plano
+            thread = threading.Thread(target=shell.run)
+            thread.daemon = True  # Marcar el hilo como "daemon" para que se detenga cuando finalice el programa principal
+            thread.start()
+
+            print("Shell running on port", port)
+        else:
+            print("Unable to create shell for port", port)
+
+    def send_command(self, port, command):
+        print("Sending command to port", port)
+        shell = self.connections.get(port)
+        if shell and shell.conn:
+            shell.send_command(command)
+            output = self.receive_output(port)  # Agregar esto
+            print("Command output:", output)
+
+    def receive_output(self, port):
+        print("Receiving output from port", port)
+        shell = self.connections.get(port)
+        if shell:
+            return shell.receive_output()
+
+    def close_connection(self, port):
+        shell = self.connections.get(port)
+        if shell:
+            shell.close()
+        self.connections.pop(port, None)
+
     def get_connection(self, port):
         if port in self.connections:
             # La conexión ya existe, la recuperamos
             return self.connections[port]
         else:
-            # La conexión no existe, intentamos establecerla
+            # La conexión no existe, la iniciamos
             try:
-                # Verificar si el puerto ya está en uso
-                if self.port_in_use(port):
-                    print(f"Port {port} is already in use")
-                    return None
-
-                # Intentar establecer la conexión
-                shell = SocketShell(port)
-                if shell.sock is not None:
-                    print(f"Shell created for port {port}")
-                    shell.run()
-                    print(f"Shell running on port {port}")
-                    self.connections[port] = shell
-                    return shell
-                else:
-                    print(f"Unable to create shell for port {port}")
-                    return None
-
+                self.start_connection(port)
+                print(f"Connection started on port {port}")
+                return self.connections[port]
             except Exception as e:
                 print(f"Error starting connection on port {port}: {e}")
                 return None
 
-    def port_in_use(self, port):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            result = s.connect_ex(('localhost', port))
-            return result == 0
+    def set_directory(self, port, directory):
+        shell = self.connections.get(port)
+        if shell:
+            shell.set_directory(directory)
+
+    def receive_file(self, port, file_path):
+        shell = self.connections.get(port)
+        if shell:
+            shell.receive_file(file_path)
+
+    def send_file(self, port, file_path):
+        shell = self.connections.get(port)
+        if shell:
+            shell.send_file(file_path)
