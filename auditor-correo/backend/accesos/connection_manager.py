@@ -21,6 +21,8 @@ class SocketShell:
         print('Accepted connection', self.conn, 'from', addr)
         self.conn.setblocking(False)
         self.selector.register(self.conn, selectors.EVENT_READ, self.read)
+        self.conn.send('echo "Connection Established"\n'.encode())  # Enviar un comando inicial
+
 
     def read(self, conn):
         data = conn.recv(1000)
@@ -31,7 +33,7 @@ class SocketShell:
     def run(self):
         print("Starting to run the shell on port", self.port)
         while True:
-            events = self.selector.select(timeout=None)
+            events = self.selector.select(timeout=2)
             for key, mask in events:
                 callback = key.data
                 callback(key.fileobj)
@@ -59,6 +61,7 @@ class ConnectionManager:
         print("Sending command to port", port)
         shell = self.connections.get(port)
         if shell and shell.conn:
+            command = command + "\n"  # Asegúrate de enviar una nueva línea al final del comando
             shell.conn.send(command.encode())
 
     def receive_output(self, port):
