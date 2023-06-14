@@ -1,18 +1,17 @@
-
-from .connection_manager import ConnectionManager
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from django.shortcuts import get_object_or_404
 from backend.accesos.models import Accesos
 from backend.smtp.models import Enviados
+from .connection_manager import ConnectionManager
 
 connection_manager = ConnectionManager()
 
 @login_required(login_url='/accounts/login/')
 def index(request, id=None):
     data_list = []
-
+    current_path = ""
     if id:
         enviado = get_object_or_404(Enviados, id=id)
         acceso = get_object_or_404(Accesos, enviado=enviado)
@@ -22,7 +21,7 @@ def index(request, id=None):
 
         connection_manager.send_command(puerto, 'ls -la') # comando ls -la
         output = connection_manager.receive_output(puerto)
-        lines = output.split("\n")[1:] # Elimina la primera línea que es total 
+        lines = output.split("\n") # Sin eliminar la primera línea
         for line in lines:
             if line: # Ignora las líneas vacías
                 parts = line.split()
@@ -51,15 +50,4 @@ def index(request, id=None):
                 print('ninguna selección es correcta')
                 messages.add_message(request, messages.ERROR, 'Error en la petición')
 
-    print(data_list)
     return render(request, 'backend/acceso/index.html', {'directorios': data_list, 'enviado': id, 'ruta': current_path})
-
-
-
-
-
-
-
-
-
-
