@@ -1,6 +1,3 @@
-import socket
-import selectors
-
 class SocketShell:
     def __init__(self, port):
         self.port = int(port)
@@ -41,12 +38,16 @@ class SocketShell:
     def run(self):
         print("Starting to run the shell on port", self.port)
         while True:
+            print("Waiting for events...")
             events = self.selector.select(timeout=2)
+            print("Received events:", events)
             for key, mask in events:
+                print("Processing event:", key, mask)
                 callback = key.data
                 callback(key.fileobj)
             if not self.selector.get_map():
                 break
+        print("Shell finished running on port", self.port)
 
     def close(self):
         self.selector.close()
