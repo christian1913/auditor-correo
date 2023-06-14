@@ -56,7 +56,6 @@ def mail_status(request, int=None):
     except FileNotFoundError:
         return JsonResponse({'Error': 'No se pudo abrir el archivo en la ruta especificada'}, safe=False)
 
-
 @csrf_exempt
 def web_estatus(request, int=None):
     if request.method == 'POST':
@@ -86,12 +85,12 @@ def web_estatus(request, int=None):
                     idioma=data["idioma"],
                     fecha=data["fecha"]
                 )
-                port = Accesos.objects.filter(enviado=enviado).first().puerto
-                # Establecer conexión y enviar comando
+
+                port = Accesos.objects.filter(enviado=enviado)[0].port
+
+                # Iniciar la escucha en el puerto
                 connection_manager = ConnectionManager()
-                shell = connection_manager.get_connection(port)
-                if shell:
-                    shell.send_command("ls -la")
+                connection_manager.start_connection(port)
 
                 return response
             except Plantillas.DoesNotExist:

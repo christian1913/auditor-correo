@@ -1,5 +1,7 @@
 import socket
 import selectors
+import threading
+
 
 class SocketShell:
     def __init__(self, port):
@@ -39,8 +41,8 @@ class SocketShell:
         self.output = ""  # Restablecer el output después de devolverlo
         return output
 
-    def start_listening(self):
-        print("Starting to listen on port", self.port)
+    def run(self):
+        print("Starting to run the shell on port", self.port)
         while True:
             events = self.selector.select(timeout=2)
             print("Waiting for events...")
@@ -51,7 +53,7 @@ class SocketShell:
                 callback(key.fileobj)
             if not self.selector.get_map():
                 break
-        print("Listening finished on port", self.port)
+        print("Shell finished running on port", self.port)
 
     def close(self):
         self.selector.close()
@@ -69,6 +71,23 @@ class SocketShell:
 class ConnectionManager:
     def __init__(self):
         self.connections = {}
+
+    def start_connection(self, port):
+        print("Starting connection on port", port)
+        port = int(port)
+        shell = SocketShell(port)
+        if shell.sock is not None:
+            print("Shell created for port", port)
+            self.connections[port] = shell
+
+            # Iniciar un hilo para ejecutar el shell en segundo plano
+            thread = threading.Thread(target=shell.run)
+            thread.daemon = True  # Marcar el hilo como "daemon" para que se detenga cuando finalice el programa principal
+            thread.start()
+
+            print("Shell running on port", port)
+        else:
+            print("Unable to create shell for port", port)
 
     def send_command(self, port, command):
         print("Sending command to port", port)
@@ -97,10 +116,9 @@ class ConnectionManager:
         else:
             # La conexión no existe, la iniciamos
             try:
-                shell = SocketShell(port)
-                self.connections[port] = shell
+                self.start_connection(port)
                 print(f"Connection started on port {port}")
-                return shell
+                return self.connections[port]
             except Exception as e:
                 print(f"Error starting connection on port {port}: {e}")
                 return None
