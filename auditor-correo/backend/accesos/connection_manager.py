@@ -96,7 +96,10 @@ class ConnectionManager:
             shell.send_command(command)
             output = self.receive_output(port)  # Agregar esto
             print("Command output:", output)
+        else:
+            print("No active connection on port", port)
 
+            
     def receive_output(self, port):
         print("Receiving output from port", port)
         shell = self.connections.get(port)
