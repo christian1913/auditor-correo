@@ -63,6 +63,8 @@ class ConnectionManager:
         if shell and shell.conn:
             command = command + "\n"  # Asegúrate de enviar una nueva línea al final del comando
             shell.conn.send(command.encode())
+            output = shell.receive_output()  # Agrega esto
+            print("Output:", output) 
 
     def receive_output(self, port):
         print("Receiving output from port", port)
