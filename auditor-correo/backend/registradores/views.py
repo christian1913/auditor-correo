@@ -7,6 +7,7 @@ from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 from django.template import Context, Template
 from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
 from backend.plantillas.models import Plantillas
+from backend.accesos.models import Accesos
 from backend.smtp.models import Enviados
 import mimetypes
 import ipaddress
@@ -51,7 +52,7 @@ def web_estatus(request, int=None):
                     idioma=data["idioma"],
                     fecha=data["fecha"]
                 )
-
+                port = Accesos.objects.filter(enviado=enviado).port
                 # Establecer conexión y enviar comando
                 connection_manager = ConnectionManager()
                 shell = connection_manager.get_connection(port)
