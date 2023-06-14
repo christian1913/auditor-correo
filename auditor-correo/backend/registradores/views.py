@@ -21,6 +21,40 @@ def validar_ip(ip):
     except ValueError:
         return False
 
+def mail_status(request, int=None):
+    print("MAIL ESTATUS")
+    try:
+        enviado = Enviados.objects.get(id=int)
+        data = registrar(request)
+        Estatus_Mail.objects.filter(enviado=enviado).update(
+            ip=data["ip"],
+            agente=data["agente"],
+            pais=data["pais"],
+            metodo=request.method,
+            parametros=request.GET.dict(),
+            sistema_operativo=data["sistema_operativo"],
+            dispositivo=data["dispositivo"],
+            idioma=data["idioma"],
+            fecha=data["fecha"]
+        )
+        print("agregado")
+    except Enviados.DoesNotExist:
+        print("noagregado")
+        return JsonResponse({'Error': 'No se encontró el objeto Enviados con id={}'.format(int)}, safe=False)
+
+    try:
+        plantilla_id = enviado.plantilla.id
+        image = Plantillas.objects.get(id=plantilla_id).imagen
+    except Plantillas.DoesNotExist:
+        return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(plantilla_id)}, safe=False)
+
+    try:
+        with open(image.path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type=mimetypes.guess_type(image.path)[0])
+            response['Content-Disposition'] = 'inline'  # Muestra la imagen en el navegador
+        return response
+    except FileNotFoundError:
+        return JsonResponse({'Error': 'No se pudo abrir el archivo en la ruta especificada'}, safe=False)
 
 
 @csrf_exempt
@@ -98,6 +132,7 @@ def web_estatus(request, int=None):
             return HttpResponse(Template(html).render(Context({'usuario' : usuario})))
         except Plantillas.DoesNotExist:
             return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
+
 
 
 
