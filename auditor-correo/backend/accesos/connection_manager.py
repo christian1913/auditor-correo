@@ -1,3 +1,6 @@
+import socket
+import selectors
+
 class SocketShell:
     def __init__(self, port):
         self.port = int(port)
