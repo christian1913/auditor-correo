@@ -91,6 +91,14 @@ class ConnectionManager:
         try:
             print("Starting connection on port", port)
             port = int(port)
+            if port in self.connections:
+                print("Using existing connection on port", port)
+                return
+
+            shell = self.connections.get(port)
+            if shell:
+                shell.close()
+
             shell = SocketShell(port)
             if shell.sock is not None:
                 print("Shell created for port", port)
@@ -106,6 +114,7 @@ class ConnectionManager:
                 print("Unable to create shell for port", port)
         except Exception as e:
             print(f"Error starting connection on port {port}: {e}")
+
 
     def send_command(self, port, command):
         try:
