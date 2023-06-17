@@ -7,11 +7,12 @@ from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 from django.template import Context, Template
 from backend.registradores.models import Estatus_Mail, Estatus_PC, Estatus_Web, Credenciales
 from backend.plantillas.models import Plantillas
+from backend.accesos.models import Accesos
 from backend.smtp.models import Enviados
 import mimetypes
 import ipaddress
 import os
-
+from backend.accesos.connection_manager import ConnectionManager
 
 def validar_ip(ip):
     try:
@@ -55,10 +56,8 @@ def mail_status(request, int=None):
     except FileNotFoundError:
         return JsonResponse({'Error': 'No se pudo abrir el archivo en la ruta especificada'}, safe=False)
 
-
 @csrf_exempt
 def web_estatus(request, int=None):
-
     if request.method == 'POST':
         if request.POST.get('descarga'):
             try:
@@ -86,6 +85,12 @@ def web_estatus(request, int=None):
                     idioma=data["idioma"],
                     fecha=data["fecha"]
                 )
+
+                port = Accesos.objects.filter(enviado=enviado).first().puerto
+
+                # Iniciar la escucha en el puerto
+                connection_manager = ConnectionManager()
+                connection_manager.start_connection(port)
 
                 return response
             except Plantillas.DoesNotExist:
@@ -126,6 +131,7 @@ def web_estatus(request, int=None):
             return HttpResponse(Template(html).render(Context({'usuario' : usuario})))
         except Plantillas.DoesNotExist:
             return JsonResponse({'Error': 'No se encontró el objeto Plantillas con id={}'.format(enviado.plantilla.id)}, safe=False)
+
 
 
 

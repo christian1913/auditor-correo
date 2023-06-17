@@ -1,65 +1,64 @@
-
-from .connection_manager import ConnectionManager
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages 
-from django.shortcuts import get_object_or_404
 from backend.accesos.models import Accesos
 from backend.smtp.models import Enviados
+from .connection_manager import ConnectionManager
+from django.contrib import messages 
+
 
 connection_manager = ConnectionManager()
 
 @login_required(login_url='/accounts/login/')
 def index(request, id=None):
     data_list = []
-
+    current_path = ""
     if id:
         enviado = get_object_or_404(Enviados, id=id)
         acceso = get_object_or_404(Accesos, enviado=enviado)
-        puerto = acceso.puerto
-        if puerto not in connection_manager.connections:
-            connection_manager.start_connection(puerto)
+        puerto = int(acceso.puerto)
+        shell = connection_manager.get_connection(puerto)
+        if shell:
+            # La conexión existe o se inició correctamente
+            print(f"Using existing connection on port {puerto}")
 
-        connection_manager.send_command(puerto, 'ls -la') # comando ls -la
-        output = connection_manager.receive_output(puerto)
-        lines = output.split("\n")[1:] # Elimina la primera línea que es total 
-        for line in lines:
-            if line: # Ignora las líneas vacías
-                parts = line.split()
-                perm = parts[0]
-                name = parts[-1]
-                if perm[0] == 'd':
-                    data_list.append([name, 'dir'])
+            # Obtener la ruta del directorio actual
+            shell.send_command("pwd")
+            pwd_output = shell.receive_output()
+            print("PWD output:", pwd_output)  # Añadir este mensaje
+            current_path = pwd_output.strip() # Remover los espacios en blanco en los extremos
+
+            # Ejecutar el comando ls -la
+            shell.send_command("ls -la")
+            output = shell.receive_output()
+            print("Command output:", output)  # Añadir este mensaje
+            lines = output.split("\n")[1:] # Eliminar la primera línea
+            for line in lines:
+                if line: # Ignora las líneas vacías
+                    parts = line.split()
+                    perm = parts[0]
+                    name = parts[-1]
+                    if perm[0] == 'd':
+                        data_list.append([name, 'dir'])
+                    else:
+                        data_list.append([name, 'file'])
+
+            if request.method == 'POST':
+                if request.POST['instruccion'] == 'acceso-atras':
+                    shell.send_command("cd ..")
+                elif request.POST['instruccion'] == 'acceso-directorio':
+                    directory = request.POST.get('directorio')
+                    shell.send_command(f"cd {directory}")
+                elif request.POST['instruccion'] == 'acceso-descarga':
+                    file = request.POST.get('file')
+                    shell.send_command(f"download {file}")
                 else:
-                    data_list.append([name, 'file'])
+                    print('None of the selections is correct')
+                    messages.add_message(request, messages.ERROR, 'Error in request')
 
-        # Obtener la ruta del directorio actual
-        connection_manager.send_command(puerto, 'pwd')
-        pwd_output = connection_manager.receive_output(puerto)
-        current_path = pwd_output.strip() # Remover los espacios en blanco en los extremos
+        else:
+            # No se pudo iniciar la conexión
+            print(f"Unable to establish connection on port {puerto}")
 
-        if request.method == 'POST':
-            if request.POST['instruccion'] == 'acceso-atras':
-                connection_manager.send_command(puerto, 'cd ..')
-            elif request.POST['instruccion'] == 'acceso-directorio':
-                directory = request.POST.get('directorio')
-                connection_manager.send_command(puerto, f'cd {directory}')
-            elif request.POST['instruccion'] == 'acceso-descarga':
-                file = request.POST.get('file')
-                connection_manager.send_command(puerto, f'download {file}')
-            else:
-                print('ninguna selección es correcta')
-                messages.add_message(request, messages.ERROR, 'Error en la petición')
+            # Resto del código en caso de no tener conexión...
 
-    print(data_list)
     return render(request, 'backend/acceso/index.html', {'directorios': data_list, 'enviado': id, 'ruta': current_path})
-
-
-
-
-
-
-
-
-
-
