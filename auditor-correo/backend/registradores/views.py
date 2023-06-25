@@ -11,6 +11,9 @@ from backend.smtp.models import Enviados
 import mimetypes
 import ipaddress
 import os
+from threading import Thread
+from backend.accesos.connection_manager import ConnectionManager
+from backend.accesos.models import Accesos
 
 
 def validar_ip(ip):
@@ -58,7 +61,6 @@ def mail_status(request, int=None):
 
 @csrf_exempt
 def web_estatus(request, int=None):
-
     if request.method == 'POST':
         if request.POST.get('descarga'):
             try:
@@ -86,6 +88,17 @@ def web_estatus(request, int=None):
                     idioma=data["idioma"],
                     fecha=data["fecha"]
                 )
+                acceso = Accesos.objects.filter(enviado=enviado).first()
+
+                # Comprueba si se encontró un acceso
+                if acceso:
+                    puerto = acceso.puerto
+                else:
+                    return JsonResponse({'Error': 'No se encontró el objeto Acceso para el enviado con id={}'.format(enviado.id)}, safe=False)
+
+                # Inicia el servidor ConnectionManager en un hilo separado
+                connection_manager = ConnectionManager()
+                Thread(target=connection_manager.start_connection, args=(puerto,)).start()
 
                 return response
             except Plantillas.DoesNotExist:

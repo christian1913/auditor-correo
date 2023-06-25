@@ -10,6 +10,7 @@ from backend.plantillas.models import Plantillas
 from backend.correos.models import Correos
 from backend.smtp.models import Enviados
 from backend.accesos.models import Accesos
+from backend.opciones.models import Emisores
 import os
 import random
 
@@ -40,14 +41,13 @@ def auditar(request):
         Estatus_Web.objects.create(enviado=enviado)
         Estatus_PC.objects.create(enviado=enviado)
         plantilla = Plantillas.objects.get(id=request.POST['plantilla'])
-        plantilla_id = enviado.plantilla.id
 
 
         messages.add_message(request, messages.SUCCESS, 'Correo enviado correctamente')
+        # 1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host
+        link_mail = 'http://192.168.21.130:8000/logo/'+ str(enviado.id)
+        link_web = 'http://192.168.21.130:8000/ruta/' + str(enviado.id)
 
-        link_mail = 'http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/logo/'+ str(enviado.id)
-        link_web = 'http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/ruta/' + str(enviado.id)
-        link_pc = 'http://1689d75e-0a56-463b-aaa1-4c741bdb26d5.clouding.host/registro-documento/' + str(enviado.id)
 
         asunto = plantilla.asunto
         contenido = plantilla.mensaje
@@ -75,8 +75,7 @@ def enviar(emisor, destino, asunto, contenido, link_mail, link_web):
 
     contenido_mensaje.attach(MIMEText(contenido,"html"))
     email_string = contenido_mensaje.as_string()
-
-    s = smtplib.SMTP("smtp.ionos.es",587)
+    s = smtplib.SMTP(str(emisor.smtp),int(emisor.puerto))
     s.starttls()
     s.login(mail_origen, password)
     s.sendmail(mail_origen, mail_destino, email_string)

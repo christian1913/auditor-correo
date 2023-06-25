@@ -2,8 +2,13 @@ import time
 import pexpect
 
 class ConnectionManager:
-    def __init__(self):
-        self.connections = {}
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(ConnectionManager, cls).__new__(cls, *args, **kwargs)
+            cls._instance.connections = {}
+        return cls._instance
 
     def start_connection(self, port):
         shell = NetcatShell(port)
