@@ -6,12 +6,17 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from backend.accesos.models import Accesos
 from backend.smtp.models import Enviados
+import re
+
 
 connection_manager = ConnectionManager()
+
 
 @login_required(login_url='/accounts/login/')
 def index(request, id=None):
     data_list = []
+    current_path = ""
+    output = ""
 
     if id:
         enviado = get_object_or_404(Enviados, id=id)
@@ -20,23 +25,8 @@ def index(request, id=None):
         if puerto not in connection_manager.connections:
             connection_manager.start_connection(puerto)
 
-        connection_manager.send_command(puerto, 'ls -la') # comando ls -la
+        connection_manager.send_command(puerto, 'dir') 
         output = connection_manager.receive_output(puerto)
-        lines = output.split("\n")[1:] # Elimina la primera línea que es total 
-        for line in lines:
-            if line: # Ignora las líneas vacías
-                parts = line.split()
-                perm = parts[0]
-                name = parts[-1]
-                if perm[0] == 'd':
-                    data_list.append([name, 'dir'])
-                else:
-                    data_list.append([name, 'file'])
-
-        # Obtener la ruta del directorio actual
-        connection_manager.send_command(puerto, 'pwd')
-        pwd_output = connection_manager.receive_output(puerto)
-        current_path = pwd_output.strip() # Remover los espacios en blanco en los extremos
 
         if request.method == 'POST':
             if request.POST['instruccion'] == 'acceso-atras':
@@ -48,17 +38,31 @@ def index(request, id=None):
                 file = request.POST.get('file')
                 connection_manager.send_command(puerto, f'download {file}')
             else:
-                print('ninguna selección es correcta')
                 messages.add_message(request, messages.ERROR, 'Error en la petición')
+            
+            # Después de cada comando de cambio de directorio, envía un nuevo comando 'dir' y lee su salida
+            connection_manager.send_command(puerto, 'dir') 
+            output = connection_manager.receive_output(puerto)
 
-    print(data_list)
+        # Patrones de expresiones regulares para identificar directorios y archivos
+        dir_pattern = re.compile(r'<DIR>\s+([^\r\n]+)')
+        file_pattern = re.compile(r'\d+/\d+/\d+\s+\d+:\d+\s+([^\r\n]+)')
+        path_pattern = re.compile(r'(\w:\\[^\r\n]+)>')
+
+        lines = output.split("\n")
+        for line in lines:
+            dir_match = dir_pattern.search(line)
+            file_match = file_pattern.search(line)
+            path_match = path_pattern.search(line)
+            
+            if dir_match:
+                data_list.append([dir_match.group(1), 'dir'])
+            elif file_match:
+                data_list.append([file_match.group(1).split()[-1], 'file'])
+            elif path_match:
+                current_path = path_match.group(1)
+
     return render(request, 'backend/acceso/index.html', {'directorios': data_list, 'enviado': id, 'ruta': current_path})
-
-
-
-
-
-
 
 
 

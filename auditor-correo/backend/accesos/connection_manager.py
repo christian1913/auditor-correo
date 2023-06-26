@@ -37,27 +37,25 @@ class ConnectionManager:
 class NetcatShell:
     def __init__(self, port):
         self.port = port
-        self.process = pexpect.spawn(f'nc -lvp {port}')
+        self.process = pexpect.spawn(f'nc -lvnp {port}')
         self.process.setecho(False)
+        self.process.sendline('export LC_ALL=C.UTF-8')  # Asegura que la codificación es UTF-8
 
     def wait_for_connection(self):
         print(f"Esperando conexión en el puerto {self.port}...")
-        time.sleep(5)
-        print("Continuando bajo la suposición de que la conexión ha sido establecida.")
-
         print("Leyendo el output inicial...")
-        self.receive_output(max_timeout=10)
+        self.receive_output(max_timeout=1)
         print("Listo para enviar comandos.")
 
     def send_command(self, command):
         self.process.sendline(command)
 
-    def receive_output(self, max_timeout=0.1):
+    def receive_output(self, max_timeout=2):
         time.sleep(max_timeout)
         output = ""
         while True:
             try:
-                line = self.process.read_nonblocking(1024, timeout=max_timeout).decode()
+                line = self.process.read_nonblocking(1024, timeout=max_timeout).decode('utf-8', 'ignore')
                 output += line
             except pexpect.TIMEOUT:
                 break
